@@ -1,9 +1,18 @@
 <script lang="ts">
-	import {Button} from "$lib/components/ui/button";
-	import {Alert} from "$lib/components/ui/alert";
-	import {Card} from "$lib/components/ui/card";
+	import { toast } from 'svelte-sonner';
+	import { Button } from "$lib/components/ui/button";
+	import { Card } from "$lib/components/ui/card";
 
 	let { data } = $props();
+
+	// Show toast notification based on verification status
+	$effect(() => {
+		if (data.success) {
+			toast.success('Your email has been successfully verified!');
+		} else if (data.error) {
+			toast.error(data.error);
+		}
+	});
 </script>
 
 <div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
@@ -14,27 +23,21 @@
 
 		<Card>
 			{#if data.success}
-				<Alert variant="default" class="mb-4">
-					Your email has been successfully verified!
-				</Alert>
 				<div class="text-center">
 					<a href="/dashboard">
 						<Button class="w-full">Go to Dashboard</Button>
 					</a>
 				</div>
 			{:else if data.error}
-				<Alert variant="destructive" class="mb-4">
-					{data.error}
-				</Alert>
 				<div class="text-center">
 					<a href="/login">
 						<Button class="w-full">Go to Login</Button>
 					</a>
 				</div>
 			{:else}
-				<Alert variant="default">
+				<div class="text-center text-gray-600">
 					Verifying your email...
-				</Alert>
+				</div>
 			{/if}
 		</Card>
 	</div>

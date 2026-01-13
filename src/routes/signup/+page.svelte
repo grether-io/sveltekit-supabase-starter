@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
+	import { toast } from 'svelte-sonner';
 	import { Card } from "$lib/components/ui/card";
-	import { Alert } from "$lib/components/ui/alert";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
 	import { Label } from "$lib/components/ui/label";
@@ -9,6 +9,13 @@
 	let { data } = $props();
 
 	const { form, errors, enhance, message } = $derived.by(() => superForm(data.form));
+
+	// Show toast notification when there's a message
+	$effect(() => {
+		if ($message) {
+			toast.error($message);
+		}
+	});
 </script>
 
 <div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
@@ -21,12 +28,7 @@
 			</p>
 		</div>
 
-		<Card>
-			{#if $message}
-				<Alert variant="destructive" class="mb-4">
-					{$message}
-				</Alert>
-			{/if}
+		<Card class="">
 
 			<form method="POST" use:enhance class="space-y-4">
 				<div class="grid grid-cols-2 gap-4">

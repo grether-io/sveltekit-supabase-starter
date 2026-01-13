@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
+	import { toast } from 'svelte-sonner';
 	import * as InputOTP from '$lib/components/ui/input-otp';
 	import { Label } from '$lib/components/ui/label';
 	import { Card } from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
-	import { Alert } from '$lib/components/ui/alert';
 
 	let { data } = $props();
 
@@ -14,6 +14,13 @@
 
 	$effect(() => {
 		$form.code = otpValue;
+	});
+
+	// Show toast notification when there's a message
+	$effect(() => {
+		if ($message) {
+			toast.error($message);
+		}
 	});
 </script>
 
@@ -27,11 +34,6 @@
 		</div>
 
 		<Card>
-			{#if $message}
-				<Alert variant="destructive" class="mb-4">
-					{$message}
-				</Alert>
-			{/if}
 
 			<form method="POST" use:enhance class="space-y-6">
 				<div class="space-y-2">
