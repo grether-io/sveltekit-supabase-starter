@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
-	import Card from '$lib/components/ui/Card.svelte';
-	import FormField from '$lib/components/ui/FormField.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Alert from '$lib/components/ui/Alert.svelte';
+	import { Card } from "$lib/components/ui/card";
+	import { Alert } from "$lib/components/ui/alert";
+	import { Button } from "$lib/components/ui/button";
+	import { Input } from "$lib/components/ui/input";
+	import { Label } from "$lib/components/ui/label";
 
 	let { data } = $props();
 
-	const { form, errors, enhance, delayed, message } = superForm(data.form);
+	const { form, errors, enhance, message } = $derived.by(() => superForm(data.form));
 </script>
 
 <div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
@@ -22,58 +23,71 @@
 
 		<Card>
 			{#if $message}
-				<Alert variant="error" class="mb-4">
+				<Alert variant="destructive" class="mb-4">
 					{$message}
 				</Alert>
 			{/if}
 
 			<form method="POST" use:enhance class="space-y-4">
 				<div class="grid grid-cols-2 gap-4">
-					<FormField
-						label="First name"
-						name="firstname"
-						bind:value={$form.firstname}
-						error={$errors.firstname?.[0]}
-						required
-					/>
-					<FormField
-						label="Last name"
-						name="lastname"
-						bind:value={$form.lastname}
-						error={$errors.lastname?.[0]}
-						required
-					/>
+					<div class="space-y-2">
+						<Label for="firstname">First name</Label>
+						<Input
+							id="firstname"
+							name="firstname"
+							bind:value={$form.firstname}
+							required
+						/>
+						{#if $errors.firstname}
+							<p class="text-sm text-destructive">{$errors.firstname[0]}</p>
+						{/if}
+					</div>
+					<div class="space-y-2">
+						<Label for="lastname">Last name</Label>
+						<Input
+							id="lastname"
+							name="lastname"
+							bind:value={$form.lastname}
+							required
+						/>
+						{#if $errors.lastname}
+							<p class="text-sm text-destructive">{$errors.lastname[0]}</p>
+						{/if}
+					</div>
 				</div>
 
-				<FormField
-					label="Display name"
-					name="displayname"
-					bind:value={$form.displayname}
-					error={$errors.displayname?.[0]}
-					required
-				/>
 
-				<FormField
-					label="Email"
-					name="email"
-					type="email"
-					bind:value={$form.email}
-					error={$errors.email?.[0]}
-					placeholder="you@example.com"
-					required
-				/>
+				<div class="space-y-2">
+					<Label for="email">Email</Label>
+					<Input
+						id="email"
+						name="email"
+						type="email"
+						bind:value={$form.email}
+						placeholder="you@example.com"
+						required
+					/>
+					{#if $errors.email}
+						<p class="text-sm text-destructive">{$errors.email[0]}</p>
+					{/if}
+				</div>
 
-				<FormField
-					label="Password"
-					name="password"
-					type="password"
-					bind:value={$form.password}
-					error={$errors.password?.[0]}
-					placeholder="••••••••"
-					required
-				/>
+				<div class="space-y-2">
+					<Label for="password">Password</Label>
+					<Input
+						id="password"
+						name="password"
+						type="password"
+						bind:value={$form.password}
+						placeholder="••••••••"
+						required
+					/>
+					{#if $errors.password}
+						<p class="text-sm text-destructive">{$errors.password[0]}</p>
+					{/if}
+				</div>
 
-				<Button type="submit" class="w-full" loading={$delayed}>
+				<Button type="submit" class="w-full">
 					Create account
 				</Button>
 			</form>

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Card from '$lib/components/ui/Card.svelte';
-	import Alert from '$lib/components/ui/Alert.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
+	import {Button} from "$lib/components/ui/button";
+	import {Alert} from "$lib/components/ui/alert";
+	import {Card} from "$lib/components/ui/card";
 
 	let { data } = $props();
 </script>
@@ -14,7 +14,7 @@
 
 		<Card>
 			{#if data.success}
-				<Alert variant="success" class="mb-4">
+				<Alert variant="default" class="mb-4">
 					Your email has been successfully verified!
 				</Alert>
 				<div class="text-center">
@@ -23,7 +23,7 @@
 					</a>
 				</div>
 			{:else if data.error}
-				<Alert variant="error" class="mb-4">
+				<Alert variant="destructive" class="mb-4">
 					{data.error}
 				</Alert>
 				<div class="text-center">
@@ -32,7 +32,7 @@
 					</a>
 				</div>
 			{:else}
-				<Alert variant="info">
+				<Alert variant="default">
 					Verifying your email...
 				</Alert>
 			{/if}

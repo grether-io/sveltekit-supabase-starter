@@ -1,19 +1,20 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
-	import { Tabs } from 'bits-ui';
-	import Card from '$lib/components/ui/Card.svelte';
-	import FormField from '$lib/components/ui/FormField.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Alert from '$lib/components/ui/Alert.svelte';
 	import { applyAction, enhance as svelteEnhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { Button } from "$lib/components/ui/button";
+	import { Card } from "$lib/components/ui/card";
+	import { Alert } from "$lib/components/ui/alert";
+	import { Input } from "$lib/components/ui/input";
+	import { Label } from "$lib/components/ui/label";
+	import * as Tabs from "$lib/components/ui/tabs";
 
 	let { data, form: actionResult } = $props();
 
-	const profileForm = superForm(data.profileForm, { id: 'profile' });
-	const emailForm = superForm(data.emailForm, { id: 'email' });
-	const passwordForm = superForm(data.passwordForm, { id: 'password' });
-	const twoFactorForm = superForm(data.twoFactorForm, { id: 'twoFactor' });
+	const { form: profileFormData, errors: profileErrors, enhance: profileEnhance, delayed: profileDelayed, message: profileMessage } = $derived.by(() => superForm(data.profileForm, { id: 'profile' }));
+	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage } = $derived.by(() => superForm(data.emailForm, { id: 'email' }));
+	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage } = $derived.by(() => superForm(data.passwordForm, { id: 'password' }));
+	const { form: twoFactorFormData, errors: twoFactorErrors, enhance: twoFactorEnhance, delayed: twoFactorDelayed, message: twoFactorMessage } = $derived.by(() => superForm(data.twoFactorForm, { id: 'twoFactor' }));
 
 	let activeTab = $state('profile');
 	let mfaEnrollment = $state<any>(null);
@@ -71,47 +72,50 @@
 
 				<!-- Profile Tab -->
 				<Tabs.Content value="profile">
-					{#if profileForm.message}
+					{#if $profileMessage}
 						<Alert
-							variant={$profileForm.message.includes('success') ? 'success' : 'error'}
+							variant={$profileMessage.includes('success') ? 'default' : 'destructive'}
 							class="mb-4"
 						>
-							{$profileForm.message}
+							{$profileMessage}
 						</Alert>
 					{/if}
 
 					<form
 						method="POST"
 						action="?/updateProfile"
-						use:profileForm.enhance
+						use:profileEnhance
 						class="space-y-4"
 					>
 						<div class="grid grid-cols-2 gap-4">
-							<FormField
-								label="First name"
-								name="firstname"
-								bind:value={$profileForm.form.firstname}
-								error={$profileForm.errors.firstname?.[0]}
-								required
-							/>
-							<FormField
-								label="Last name"
-								name="lastname"
-								bind:value={$profileForm.form.lastname}
-								error={$profileForm.errors.lastname?.[0]}
-								required
-							/>
+							<div class="space-y-2">
+								<Label for="firstname">First name</Label>
+								<Input
+									id="firstname"
+									name="firstname"
+									bind:value={$profileFormData.firstname}
+									required
+								/>
+								{#if $profileErrors.firstname}
+									<p class="text-sm text-destructive">{$profileErrors.firstname[0]}</p>
+								{/if}
+							</div>
+							<div class="space-y-2">
+								<Label for="lastname">Last name</Label>
+								<Input
+									id="lastname"
+									name="lastname"
+									bind:value={$profileFormData.lastname}
+									required
+								/>
+								{#if $profileErrors.lastname}
+									<p class="text-sm text-destructive">{$profileErrors.lastname[0]}</p>
+								{/if}
+							</div>
 						</div>
 
-						<FormField
-							label="Display name"
-							name="displayname"
-							bind:value={$profileForm.form.displayname}
-							error={$profileForm.errors.displayname?.[0]}
-							required
-						/>
 
-						<Button type="submit" loading={$profileForm.delayed}>
+						<Button type="submit" disabled={$profileDelayed}>
 							Update Profile
 						</Button>
 					</form>
@@ -119,30 +123,35 @@
 
 				<!-- Email Tab -->
 				<Tabs.Content value="email">
-					{#if emailForm.message}
+					{#if $emailMessage}
 						<Alert
-							variant={$emailForm.message.includes('Check your') ? 'success' : 'error'}
+							variant={$emailMessage.includes('Check your') ? 'default' : 'destructive'}
 							class="mb-4"
 						>
-							{$emailForm.message}
+							{$emailMessage}
 						</Alert>
 					{/if}
 
-					<form method="POST" action="?/updateEmail" use:emailForm.enhance class="space-y-4">
-						<FormField
-							label="Email address"
-							name="email"
-							type="email"
-							bind:value={$emailForm.form.email}
-							error={$emailForm.errors.email?.[0]}
-							required
-						/>
+					<form method="POST" action="?/updateEmail" use:emailEnhance class="space-y-4">
+						<div class="space-y-2">
+							<Label for="email">Email address</Label>
+							<Input
+								id="email"
+								name="email"
+								type="email"
+								bind:value={$emailFormData.email}
+								required
+							/>
+							{#if $emailErrors.email}
+								<p class="text-sm text-destructive">{$emailErrors.email[0]}</p>
+							{/if}
+						</div>
 
 						<p class="text-sm text-gray-600">
 							You'll receive a verification email at your new address.
 						</p>
 
-						<Button type="submit" loading={$emailForm.delayed}>
+						<Button type="submit" disabled={$emailDelayed}>
 							Update Email
 						</Button>
 					</form>
@@ -150,44 +159,59 @@
 
 				<!-- Password Tab -->
 				<Tabs.Content value="password">
-					{#if passwordForm.message}
+					{#if $passwordMessage}
 						<Alert
-							variant={$passwordForm.message.includes('success') ? 'success' : 'error'}
+							variant={$passwordMessage.includes('success') ? 'default' : 'destructive'}
 							class="mb-4"
 						>
-							{$passwordForm.message}
+							{$passwordMessage}
 						</Alert>
 					{/if}
 
-					<form method="POST" action="?/updatePassword" use:passwordForm.enhance class="space-y-4">
-						<FormField
-							label="Current password"
-							name="currentPassword"
-							type="password"
-							bind:value={$passwordForm.form.currentPassword}
-							error={$passwordForm.errors.currentPassword?.[0]}
-							required
-						/>
+					<form method="POST" action="?/updatePassword" use:passwordEnhance class="space-y-4">
+						<div class="space-y-2">
+							<Label for="currentPassword">Current password</Label>
+							<Input
+								id="currentPassword"
+								name="currentPassword"
+								type="password"
+								bind:value={$passwordFormData.currentPassword}
+								required
+							/>
+							{#if $passwordErrors.currentPassword}
+								<p class="text-sm text-destructive">{$passwordErrors.currentPassword[0]}</p>
+							{/if}
+						</div>
 
-						<FormField
-							label="New password"
-							name="newPassword"
-							type="password"
-							bind:value={$passwordForm.form.newPassword}
-							error={$passwordForm.errors.newPassword?.[0]}
-							required
-						/>
+						<div class="space-y-2">
+							<Label for="newPassword">New password</Label>
+							<Input
+								id="newPassword"
+								name="newPassword"
+								type="password"
+								bind:value={$passwordFormData.newPassword}
+								required
+							/>
+							{#if $passwordErrors.newPassword}
+								<p class="text-sm text-destructive">{$passwordErrors.newPassword[0]}</p>
+							{/if}
+						</div>
 
-						<FormField
-							label="Confirm new password"
-							name="confirmPassword"
-							type="password"
-							bind:value={$passwordForm.form.confirmPassword}
-							error={$passwordForm.errors.confirmPassword?.[0]}
-							required
-						/>
+						<div class="space-y-2">
+							<Label for="confirmPassword">Confirm new password</Label>
+							<Input
+								id="confirmPassword"
+								name="confirmPassword"
+								type="password"
+								bind:value={$passwordFormData.confirmPassword}
+								required
+							/>
+							{#if $passwordErrors.confirmPassword}
+								<p class="text-sm text-destructive">{$passwordErrors.confirmPassword[0]}</p>
+							{/if}
+						</div>
 
-						<Button type="submit" loading={$passwordForm.delayed}>
+						<Button type="submit" disabled={$passwordDelayed}>
 							Update Password
 						</Button>
 					</form>
@@ -196,7 +220,7 @@
 				<!-- 2FA Tab -->
 				<Tabs.Content value="2fa">
 					{#if data.mfaEnabled && !isEnrolling}
-						<Alert variant="success" class="mb-4">
+						<Alert variant="default" class="mb-4">
 							Two-factor authentication is enabled on your account.
 						</Alert>
 
@@ -221,12 +245,12 @@
 							</Button>
 						</form>
 					{:else if isEnrolling && mfaEnrollment}
-						{#if twoFactorForm.message}
+						{#if $twoFactorMessage}
 							<Alert
-								variant={$twoFactorForm.message.includes('success') ? 'success' : 'error'}
+								variant={$twoFactorMessage.includes('success') ? 'default' : 'destructive'}
 								class="mb-4"
 							>
-								{$twoFactorForm.message}
+								{$twoFactorMessage}
 							</Alert>
 						{/if}
 
@@ -247,20 +271,25 @@
 								<code class="text-sm text-gray-900">{mfaEnrollment.secret}</code>
 							</div>
 
-							<form method="POST" action="?/verifyMfa" use:twoFactorForm.enhance class="space-y-4">
+							<form method="POST" action="?/verifyMfa" use:twoFactorEnhance class="space-y-4">
 								<input type="hidden" name="factorId" value={mfaEnrollment.id} />
 
-								<FormField
-									label="Verification code"
-									name="code"
-									bind:value={$twoFactorForm.form.code}
-									error={$twoFactorForm.errors.code?.[0]}
-									placeholder="000000"
-									required
-								/>
+								<div class="space-y-2">
+									<Label for="code">Verification code</Label>
+									<Input
+										id="code"
+										name="code"
+										bind:value={$twoFactorFormData.code}
+										placeholder="000000"
+										required
+									/>
+									{#if $twoFactorErrors.code}
+										<p class="text-sm text-destructive">{$twoFactorErrors.code[0]}</p>
+									{/if}
+								</div>
 
 								<div class="flex gap-2">
-									<Button type="submit" loading={$twoFactorForm.delayed}>
+									<Button type="submit" disabled={$twoFactorDelayed}>
 										Verify & Enable
 									</Button>
 									<Button
@@ -277,7 +306,7 @@
 							</form>
 						</div>
 					{:else}
-						<Alert variant="info" class="mb-4">
+						<Alert variant="default" class="mb-4">
 							Two-factor authentication is not enabled. Add an extra layer of security to your
 							account.
 						</Alert>

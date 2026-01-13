@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Card from '$lib/components/ui/Card.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
+	import { Card } from '$lib/components/ui/card';
+	import { Button } from '$lib/components/ui/button';
 	import { createSupabaseClient } from '$lib/supabase';
 	import { goto } from '$app/navigation';
 
@@ -10,7 +10,7 @@
 
 	async function handleSignOut() {
 		await supabase.auth.signOut();
-		goto('/login');
+		await goto('/login');
 	}
 </script>
 
@@ -35,7 +35,9 @@
 				</p>
 				<p>
 					<span class="font-medium">Display Name:</span>
-					{data.user?.user_metadata?.displayname || 'Not set'}
+					{data.user?.user_metadata?.firstname && data.user?.user_metadata?.lastname
+						? `${data.user.user_metadata.firstname} ${data.user.user_metadata.lastname}`
+						: 'Not set'}
 				</p>
 				<p>
 					<span class="font-medium">User ID:</span>

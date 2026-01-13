@@ -1,19 +1,19 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
-	import { PinInput } from 'bits-ui';
-	import Card from '$lib/components/ui/Card.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Alert from '$lib/components/ui/Alert.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import * as InputOTP from '$lib/components/ui/input-otp';
+	import { Label } from '$lib/components/ui/label';
+	import { Card } from '$lib/components/ui/card';
+	import { Button } from '$lib/components/ui/button';
+	import { Alert } from '$lib/components/ui/alert';
 
 	let { data } = $props();
 
 	const { form, errors, enhance, delayed, message } = superForm(data.form);
 
-	let pinValue = $state(['', '', '', '', '', '']);
+	let otpValue = $state('');
 
 	$effect(() => {
-		$form.code = pinValue.join('');
+		$form.code = otpValue;
 	});
 </script>
 
@@ -28,33 +28,32 @@
 
 		<Card>
 			{#if $message}
-				<Alert variant="error" class="mb-4">
+				<Alert variant="destructive" class="mb-4">
 					{$message}
 				</Alert>
 			{/if}
 
 			<form method="POST" use:enhance class="space-y-6">
 				<div class="space-y-2">
-					<Label>Verification Code</Label>
-					<PinInput.Root
-						bind:value={pinValue}
-						name="code"
-						class="flex justify-center gap-2"
-						type="number"
-					>
-						{#each { length: 6 } as _, i}
-							<PinInput.Input
-								index={i}
-								class="h-12 w-12 rounded-md border border-gray-300 text-center text-lg font-semibold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-							/>
-						{/each}
-					</PinInput.Root>
+					<Label for="code">Verification Code</Label>
+					<InputOTP.Root bind:value={otpValue} maxlength={6} name="code" class="flex justify-center">
+						{#snippet children({ cells })}
+							<InputOTP.Group>
+								{#each cells as cell (cell)}
+									<InputOTP.Slot
+										{cell}
+										class="h-12 w-12 rounded-md border border-gray-300 text-center text-lg font-semibold"
+									/>
+								{/each}
+							</InputOTP.Group>
+						{/snippet}
+					</InputOTP.Root>
 					{#if $errors.code}
-						<p class="text-sm text-red-600">{$errors.code[0]}</p>
+						<p class="text-sm text-destructive">{$errors.code[0]}</p>
 					{/if}
 				</div>
 
-				<Button type="submit" class="w-full" loading={$delayed}>
+				<Button type="submit" class="w-full">
 					Verify
 				</Button>
 

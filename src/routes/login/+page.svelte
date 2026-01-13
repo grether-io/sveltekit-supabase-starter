@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
-	import Card from '$lib/components/ui/Card.svelte';
-	import FormField from '$lib/components/ui/FormField.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Alert from '$lib/components/ui/Alert.svelte';
+	import { Card } from "$lib/components/ui/card";
+	import { Alert } from "$lib/components/ui/alert";
+	import { Button } from "$lib/components/ui/button";
+	import { Input } from "$lib/components/ui/input";
+	import { Label } from "$lib/components/ui/label";
 
 	let { data } = $props();
 
@@ -22,31 +23,41 @@
 
 		<Card>
 			{#if $message}
-				<Alert variant="error" class="mb-4">
+				<Alert variant="destructive" class="mb-4">
 					{$message}
 				</Alert>
 			{/if}
 
 			<form method="POST" use:enhance class="space-y-4">
-				<FormField
-					label="Email"
-					name="email"
-					type="email"
-					bind:value={$form.email}
-					error={$errors.email?.[0]}
-					placeholder="you@example.com"
-					required
-				/>
+				<div class="space-y-2">
+					<Label for="email">Email</Label>
+					<Input
+						id="email"
+						name="email"
+						type="email"
+						bind:value={$form.email}
+						placeholder="you@example.com"
+						required
+					/>
+					{#if $errors.email}
+						<p class="text-sm text-destructive">{$errors.email[0]}</p>
+					{/if}
+				</div>
 
-				<FormField
-					label="Password"
-					name="password"
-					type="password"
-					bind:value={$form.password}
-					error={$errors.password?.[0]}
-					placeholder="••••••••"
-					required
-				/>
+				<div class="space-y-2">
+					<Label for="password">Password</Label>
+					<Input
+						id="password"
+						name="password"
+						type="password"
+						bind:value={$form.password}
+						placeholder="••••••••"
+						required
+					/>
+					{#if $errors.password}
+						<p class="text-sm text-destructive">{$errors.password[0]}</p>
+					{/if}
+				</div>
 
 				<div class="flex items-center justify-between text-sm">
 					<a href="/forgot-password" class="font-medium text-blue-600 hover:text-blue-500">
@@ -54,7 +65,7 @@
 					</a>
 				</div>
 
-				<Button type="submit" class="w-full" loading={$delayed}>
+				<Button type="submit" class="w-full">
 					Sign in
 				</Button>
 			</form>

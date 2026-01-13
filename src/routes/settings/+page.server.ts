@@ -23,8 +23,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase 
 	const profileForm = await superValidate(
 		{
 			firstname: user?.user_metadata?.firstname || '',
-			lastname: user?.user_metadata?.lastname || '',
-			displayname: user?.user_metadata?.displayname || ''
+			lastname: user?.user_metadata?.lastname || ''
 		},
 		zod4(updateProfileSchema)
 	);
@@ -57,8 +56,14 @@ export const actions: Actions = {
 			return fail(400, { profileForm: form });
 		}
 
+		const { firstname, lastname } = form.data;
+
 		const { error } = await supabase.auth.updateUser({
-			data: form.data
+			data: {
+				firstname,
+				lastname,
+				display_name: `${firstname} ${lastname}`
+			}
 		});
 
 		if (error) {
