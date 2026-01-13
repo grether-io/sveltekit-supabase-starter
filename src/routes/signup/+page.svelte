@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
 	import { Card } from "$lib/components/ui/card";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
 	import { Label } from "$lib/components/ui/label";
+	import { signupSchema } from '$lib/schemas/auth';
 
 	let { data } = $props();
 
-	const { form, errors, enhance, message } = $derived.by(() => superForm(data.form));
+	const { form, errors, enhance, message, constraints, allErrors } = $derived.by(() => superForm(data.form, {
+		validators: zod4Client(signupSchema)
+	}));
 
 	// Show toast notification when there's a message
 	$effect(() => {
@@ -30,7 +34,7 @@
 
 		<Card class="">
 
-			<form method="POST" use:enhance class="space-y-4">
+			<form method="POST" use:enhance novalidate class="space-y-4">
 				<div class="grid grid-cols-2 gap-4">
 					<div class="space-y-2">
 						<Label for="firstname">First name</Label>
@@ -38,7 +42,7 @@
 							id="firstname"
 							name="firstname"
 							bind:value={$form.firstname}
-							required
+							{...$constraints.firstname}
 						/>
 						{#if $errors.firstname}
 							<p class="text-sm text-destructive">{$errors.firstname[0]}</p>
@@ -50,7 +54,7 @@
 							id="lastname"
 							name="lastname"
 							bind:value={$form.lastname}
-							required
+							{...$constraints.lastname}
 						/>
 						{#if $errors.lastname}
 							<p class="text-sm text-destructive">{$errors.lastname[0]}</p>
@@ -67,7 +71,7 @@
 						type="email"
 						bind:value={$form.email}
 						placeholder="you@example.com"
-						required
+						{...$constraints.email}
 					/>
 					{#if $errors.email}
 						<p class="text-sm text-destructive">{$errors.email[0]}</p>
@@ -82,14 +86,14 @@
 						type="password"
 						bind:value={$form.password}
 						placeholder="••••••••"
-						required
+						{...$constraints.password}
 					/>
 					{#if $errors.password}
 						<p class="text-sm text-destructive">{$errors.password[0]}</p>
 					{/if}
 				</div>
 
-				<Button type="submit" class="w-full">
+				<Button type="submit" class="w-full" disabled={$allErrors.length > 0}>
 					Create account
 				</Button>
 			</form>

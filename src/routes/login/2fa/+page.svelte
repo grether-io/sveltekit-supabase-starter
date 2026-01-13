@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
 	import * as InputOTP from '$lib/components/ui/input-otp';
 	import { Label } from '$lib/components/ui/label';
 	import { Card } from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
+	import { twoFactorSchema } from '$lib/schemas/auth';
 
 	let { data } = $props();
 
-	const { form, errors, enhance, delayed, message } = superForm(data.form);
+	const { form, errors, enhance, delayed, message, constraints, allErrors } = superForm(data.form, {
+		validators: zod4Client(twoFactorSchema)
+	});
 
 	let otpValue = $state('');
 
@@ -35,7 +39,7 @@
 
 		<Card>
 
-			<form method="POST" use:enhance class="space-y-6">
+			<form method="POST" use:enhance novalidate class="space-y-6">
 				<div class="space-y-2">
 					<Label for="code">Verification Code</Label>
 					<InputOTP.Root bind:value={otpValue} maxlength={6} name="code" class="flex justify-center">
@@ -55,7 +59,7 @@
 					{/if}
 				</div>
 
-				<Button type="submit" class="w-full">
+				<Button type="submit" class="w-full" disabled={$delayed || $allErrors.length > 0}>
 					Verify
 				</Button>
 
