@@ -40,6 +40,10 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.562.0",
-		"bits-ui": "^2.15.4"
+		"@supabase/ssr": "^0.5.2",
+		"@supabase/supabase-js": "^2.47.10",
+		"bits-ui": "^2.15.4",
+		"sveltekit-superforms": "^2.29.1",
+		"zod": "^4.3.5"
 	}
 }
