@@ -48,6 +48,8 @@
 		"@lucide/svelte": "^0.561.0",
 		"@supabase/ssr": "^0.5.2",
 		"@supabase/supabase-js": "^2.47.10",
+		"mode-watcher": "^1.1.0",
+		"svelte-sonner": "^1.0.7",
 		"sveltekit-superforms": "^2.29.1",
 		"zod": "^4.3.5"
 	}

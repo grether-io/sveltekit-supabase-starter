@@ -2,6 +2,7 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { applyAction, enhance as svelteEnhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 	import { Button } from "$lib/components/ui/button";
 	import { Card } from "$lib/components/ui/card";
 	import { Alert } from "$lib/components/ui/alert";
@@ -11,14 +12,76 @@
 
 	let { data, form: actionResult } = $props();
 
-	const { form: profileFormData, errors: profileErrors, enhance: profileEnhance, delayed: profileDelayed, message: profileMessage } = $derived.by(() => superForm(data.profileForm, { id: 'profile' }));
-	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage } = $derived.by(() => superForm(data.emailForm, { id: 'email' }));
-	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage } = $derived.by(() => superForm(data.passwordForm, { id: 'password' }));
-	const { form: twoFactorFormData, errors: twoFactorErrors, enhance: twoFactorEnhance, delayed: twoFactorDelayed, message: twoFactorMessage } = $derived.by(() => superForm(data.twoFactorForm, { id: 'twoFactor' }));
+	// Initialize superForms - warnings about capturing initial value are expected and safe to ignore
+	// superForm handles reactivity internally
+	const { form: profileFormData, errors: profileErrors, enhance: profileEnhance, delayed: profileDelayed, message: profileMessage } = superForm(data.profileForm, {
+		id: 'profile',
+		resetForm: false,
+		invalidateAll: false
+	});
+	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage } = superForm(data.emailForm, {
+		id: 'email',
+		resetForm: false,
+		invalidateAll: 'force'
+	});
+	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage } = superForm(data.passwordForm, {
+		id: 'password',
+		resetForm: true,
+		invalidateAll: false
+	});
+	const { form: twoFactorFormData, errors: twoFactorErrors, enhance: twoFactorEnhance, delayed: twoFactorDelayed, message: twoFactorMessage } = superForm(data.twoFactorForm, {
+		id: 'twoFactor',
+		resetForm: false,
+		invalidateAll: 'force'
+	});
 
 	let activeTab = $state('profile');
 	let mfaEnrollment = $state<any>(null);
 	let isEnrolling = $state(false);
+
+	// Show toast notifications for profile updates
+	$effect(() => {
+		if ($profileMessage) {
+			if ($profileMessage.includes('success')) {
+				toast.success($profileMessage);
+			} else {
+				toast.error($profileMessage);
+			}
+		}
+	});
+
+	// Show toast notifications for email updates
+	$effect(() => {
+		if ($emailMessage) {
+			if ($emailMessage.includes('Check your')) {
+				toast.success($emailMessage);
+			} else {
+				toast.error($emailMessage);
+			}
+		}
+	});
+
+	// Show toast notifications for password updates
+	$effect(() => {
+		if ($passwordMessage) {
+			if ($passwordMessage.includes('success')) {
+				toast.success($passwordMessage);
+			} else {
+				toast.error($passwordMessage);
+			}
+		}
+	});
+
+	// Show toast notifications for 2FA updates
+	$effect(() => {
+		if ($twoFactorMessage) {
+			if ($twoFactorMessage.includes('success')) {
+				toast.success($twoFactorMessage);
+			} else {
+				toast.error($twoFactorMessage);
+			}
+		}
+	});
 
 	// Handle MFA enrollment result
 	$effect(() => {
@@ -72,14 +135,6 @@
 
 				<!-- Profile Tab -->
 				<Tabs.Content value="profile">
-					{#if $profileMessage}
-						<Alert
-							variant={$profileMessage.includes('success') ? 'default' : 'destructive'}
-							class="mb-4"
-						>
-							{$profileMessage}
-						</Alert>
-					{/if}
 
 					<form
 						method="POST"
@@ -114,7 +169,6 @@
 							</div>
 						</div>
 
-
 						<Button type="submit" disabled={$profileDelayed}>
 							Update Profile
 						</Button>
@@ -123,14 +177,6 @@
 
 				<!-- Email Tab -->
 				<Tabs.Content value="email">
-					{#if $emailMessage}
-						<Alert
-							variant={$emailMessage.includes('Check your') ? 'default' : 'destructive'}
-							class="mb-4"
-						>
-							{$emailMessage}
-						</Alert>
-					{/if}
 
 					<form method="POST" action="?/updateEmail" use:emailEnhance class="space-y-4">
 						<div class="space-y-2">
@@ -159,14 +205,6 @@
 
 				<!-- Password Tab -->
 				<Tabs.Content value="password">
-					{#if $passwordMessage}
-						<Alert
-							variant={$passwordMessage.includes('success') ? 'default' : 'destructive'}
-							class="mb-4"
-						>
-							{$passwordMessage}
-						</Alert>
-					{/if}
 
 					<form method="POST" action="?/updatePassword" use:passwordEnhance class="space-y-4">
 						<div class="space-y-2">
@@ -245,14 +283,6 @@
 							</Button>
 						</form>
 					{:else if isEnrolling && mfaEnrollment}
-						{#if $twoFactorMessage}
-							<Alert
-								variant={$twoFactorMessage.includes('success') ? 'default' : 'destructive'}
-								class="mb-4"
-							>
-								{$twoFactorMessage}
-							</Alert>
-						{/if}
 
 						<div class="space-y-4">
 							<h3 class="text-lg font-semibold">Set up Two-Factor Authentication</h3>
