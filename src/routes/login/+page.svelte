@@ -5,14 +5,16 @@
 	import { Card } from "$lib/components/ui/card";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
-	import { Label } from "$lib/components/ui/label";
+	import * as Form from "$lib/components/ui/form";
 	import { loginSchema } from '$lib/schemas/auth';
 
 	let { data } = $props();
 
-	const { form, errors, enhance, delayed, message, constraints, allErrors } = superForm(data.form, {
+	const form = superForm(data.form, {
 		validators: zod4Client(loginSchema)
 	});
+
+	const { enhance, delayed, message, constraints , allErrors } = form;
 
 	// Show toast notification when there's a message
 	$effect(() => {
@@ -33,37 +35,30 @@
 		</div>
 
 		<Card>
-
 			<form method="POST" use:enhance novalidate class="space-y-4">
-				<div class="space-y-2">
-					<Label for="email">Email</Label>
-					<Input
-						id="email"
-						name="email"
-						type="email"
-						bind:value={$form.email}
-						placeholder="you@example.com"
-						{...$constraints.email}
-					/>
-					{#if $errors.email}
-						<p class="text-sm text-destructive">{$errors.email[0]}</p>
-					{/if}
-				</div>
+				<Form.ElementField {form} name="email">
+					<Form.Control>
+						<Form.Label>Email</Form.Label>
+						<Input
+							type="email"
+							placeholder="you@example.com"
+							{...constraints}
+						/>
+						<Form.FieldErrors />
+					</Form.Control>
+				</Form.ElementField>
 
-				<div class="space-y-2">
-					<Label for="password">Password</Label>
-					<Input
-						id="password"
-						name="password"
-						type="password"
-						bind:value={$form.password}
-						placeholder="••••••••"
-						{...$constraints.password}
-					/>
-					{#if $errors.password}
-						<p class="text-sm text-destructive">{$errors.password[0]}</p>
-					{/if}
-				</div>
+				<Form.ElementField {form} name="password">
+					<Form.Control>
+						<Form.Label>Password</Form.Label>
+						<Input
+							type="password"
+							placeholder="••••••••"
+							{...constraints}
+						/>
+						<Form.FieldErrors />
+					</Form.Control>
+				</Form.ElementField>
 
 				<div class="flex items-center justify-between text-sm">
 					<a href="/forgot-password" class="font-medium text-blue-600 hover:text-blue-500">

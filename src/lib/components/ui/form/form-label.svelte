@@ -16,8 +16,10 @@
 		<Label
 			{...props}
 			data-slot="form-label"
-			class={cn("data-[fs-error]:text-destructive", className)}
+			class={className}
 		>
+			<!-- Because Label should not be red on error, removed data-[fs-error]			-->
+			<!-- class={cn("data-[fs-error]:text-destructive", className)}-->
 			{@render children?.()}
 		</Label>
 	{/snippet}
