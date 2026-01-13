@@ -8,28 +8,39 @@
 	import { Input } from "$lib/components/ui/input";
 	import { Label } from "$lib/components/ui/label";
 	import * as Tabs from "$lib/components/ui/tabs";
+	import {zod4Client} from "sveltekit-superforms/adapters";
+	import {
+		updateEmailSchema,
+		updatePasswordSchema,
+		updateProfileSchema,
+		verifyTwoFactorSetupSchema
+	} from '$lib/schemas/auth';
 
 	let { data, form: actionResult } = $props();
 
-	const { form: profileFormData, errors: profileErrors, enhance: profileEnhance, delayed: profileDelayed, message: profileMessage, tainted: profileTainted } = superForm(data.profileForm, {
+	const { form: profileFormData, errors: profileErrors, enhance: profileEnhance, delayed: profileDelayed, message: profileMessage, tainted: profileTainted, constraints: profileConstraints, allErrors: profileAllErrors } = superForm(data.profileForm, {
 		id: 'profile',
 		resetForm: false,
-		invalidateAll: false
+		invalidateAll: false,
+		validators: zod4Client(updateProfileSchema)
 	});
-	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage, tainted: emailTainted } = superForm(data.emailForm, {
+	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage, tainted: emailTainted, constraints: emailConstraints } = superForm(data.emailForm, {
 		id: 'email',
 		resetForm: false,
-		invalidateAll: 'force'
+		invalidateAll: 'force',
+		validators: zod4Client(updateEmailSchema)
 	});
-	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage, tainted: passwordTainted } = superForm(data.passwordForm, {
+	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage, tainted: passwordTainted, constraints: passwordConstraints } = superForm(data.passwordForm, {
 		id: 'password',
 		resetForm: true,
-		invalidateAll: false
+		invalidateAll: false,
+		validators: zod4Client(updatePasswordSchema)
 	});
-	const { form: twoFactorFormData, errors: twoFactorErrors, enhance: twoFactorEnhance, delayed: twoFactorDelayed, message: twoFactorMessage } = superForm(data.twoFactorForm, {
+	const { form: twoFactorFormData, errors: twoFactorErrors, enhance: twoFactorEnhance, delayed: twoFactorDelayed, message: twoFactorMessage, constraints: twoFactorConstraints } = superForm(data.twoFactorForm, {
 		id: 'twoFactor',
 		resetForm: false,
-		invalidateAll: 'force'
+		invalidateAll: 'force',
+		validators: zod4Client(verifyTwoFactorSetupSchema)
 	});
 
 	let activeTab = $state('profile');
@@ -136,7 +147,7 @@
 					<form
 						method="POST"
 						action="?/updateProfile"
-						use:profileEnhance
+						use:profileEnhance novalidate
 						class="space-y-4"
 					>
 						<div class="grid grid-cols-2 gap-4">
@@ -146,7 +157,7 @@
 									id="firstname"
 									name="firstname"
 									bind:value={$profileFormData.firstname}
-									required
+									{...$profileConstraints.firstname}
 								/>
 								{#if $profileErrors.firstname}
 									<p class="text-sm text-destructive">{$profileErrors.firstname[0]}</p>
@@ -158,7 +169,7 @@
 									id="lastname"
 									name="lastname"
 									bind:value={$profileFormData.lastname}
-									required
+									{...$profileConstraints.lastname}
 								/>
 								{#if $profileErrors.lastname}
 									<p class="text-sm text-destructive">{$profileErrors.lastname[0]}</p>
@@ -166,7 +177,7 @@
 							</div>
 						</div>
 
-						<Button type="submit" disabled={$profileDelayed || !$profileTainted}>
+						<Button type="submit" disabled={$profileDelayed || !$profileTainted || $profileAllErrors.length > 0}>
 							Update Profile
 						</Button>
 					</form>
@@ -175,7 +186,7 @@
 				<!-- Email Tab -->
 				<Tabs.Content value="email">
 
-					<form method="POST" action="?/updateEmail" use:emailEnhance class="space-y-4">
+					<form method="POST" action="?/updateEmail" use:emailEnhance novalidate class="space-y-4">
 						<div class="space-y-2">
 							<Label for="email">Email address</Label>
 							<Input
@@ -183,7 +194,7 @@
 								name="email"
 								type="email"
 								bind:value={$emailFormData.email}
-								required
+								{...$emailConstraints.email}
 							/>
 							{#if $emailErrors.email}
 								<p class="text-sm text-destructive">{$emailErrors.email[0]}</p>
@@ -211,7 +222,7 @@
 								name="currentPassword"
 								type="password"
 								bind:value={$passwordFormData.currentPassword}
-								required
+								{...$passwordConstraints.currentPassword}
 							/>
 							{#if $passwordErrors.currentPassword}
 								<p class="text-sm text-destructive">{$passwordErrors.currentPassword[0]}</p>
@@ -225,7 +236,7 @@
 								name="newPassword"
 								type="password"
 								bind:value={$passwordFormData.newPassword}
-								required
+								{...$passwordConstraints.newPassword}
 							/>
 							{#if $passwordErrors.newPassword}
 								<p class="text-sm text-destructive">{$passwordErrors.newPassword[0]}</p>
@@ -239,7 +250,7 @@
 								name="confirmPassword"
 								type="password"
 								bind:value={$passwordFormData.confirmPassword}
-								required
+								{...$passwordConstraints.confirmPassword}
 							/>
 							{#if $passwordErrors.confirmPassword}
 								<p class="text-sm text-destructive">{$passwordErrors.confirmPassword[0]}</p>
@@ -308,7 +319,7 @@
 										name="code"
 										bind:value={$twoFactorFormData.code}
 										placeholder="000000"
-										required
+										{...$twoFactorConstraints.code}
 									/>
 									{#if $twoFactorErrors.code}
 										<p class="text-sm text-destructive">{$twoFactorErrors.code[0]}</p>
