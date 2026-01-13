@@ -5,26 +5,23 @@
 	import { toast } from 'svelte-sonner';
 	import { Button } from "$lib/components/ui/button";
 	import { Card } from "$lib/components/ui/card";
-	import { Alert } from "$lib/components/ui/alert";
 	import { Input } from "$lib/components/ui/input";
 	import { Label } from "$lib/components/ui/label";
 	import * as Tabs from "$lib/components/ui/tabs";
 
 	let { data, form: actionResult } = $props();
 
-	// Initialize superForms - warnings about capturing initial value are expected and safe to ignore
-	// superForm handles reactivity internally
-	const { form: profileFormData, errors: profileErrors, enhance: profileEnhance, delayed: profileDelayed, message: profileMessage } = superForm(data.profileForm, {
+	const { form: profileFormData, errors: profileErrors, enhance: profileEnhance, delayed: profileDelayed, message: profileMessage, tainted: profileTainted } = superForm(data.profileForm, {
 		id: 'profile',
 		resetForm: false,
 		invalidateAll: false
 	});
-	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage } = superForm(data.emailForm, {
+	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage, tainted: emailTainted } = superForm(data.emailForm, {
 		id: 'email',
 		resetForm: false,
 		invalidateAll: 'force'
 	});
-	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage } = superForm(data.passwordForm, {
+	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage, tainted: passwordTainted } = superForm(data.passwordForm, {
 		id: 'password',
 		resetForm: true,
 		invalidateAll: false
@@ -169,7 +166,7 @@
 							</div>
 						</div>
 
-						<Button type="submit" disabled={$profileDelayed}>
+						<Button type="submit" disabled={$profileDelayed || !$profileTainted}>
 							Update Profile
 						</Button>
 					</form>
@@ -197,7 +194,7 @@
 							You'll receive a verification email at your new address.
 						</p>
 
-						<Button type="submit" disabled={$emailDelayed}>
+						<Button type="submit" disabled={$emailDelayed || !$emailTainted}>
 							Update Email
 						</Button>
 					</form>
@@ -249,7 +246,7 @@
 							{/if}
 						</div>
 
-						<Button type="submit" disabled={$passwordDelayed}>
+						<Button type="submit" disabled={$passwordDelayed || !$passwordTainted}>
 							Update Password
 						</Button>
 					</form>
@@ -258,9 +255,9 @@
 				<!-- 2FA Tab -->
 				<Tabs.Content value="2fa">
 					{#if data.mfaEnabled && !isEnrolling}
-						<Alert variant="default" class="mb-4">
+						<p>
 							Two-factor authentication is enabled on your account.
-						</Alert>
+						</p>
 
 						<form
 							method="POST"
@@ -336,10 +333,9 @@
 							</form>
 						</div>
 					{:else}
-						<Alert variant="default" class="mb-4">
-							Two-factor authentication is not enabled. Add an extra layer of security to your
-							account.
-						</Alert>
+						<p>
+							Two-factor authentication is not enabled. Add an extra layer of security to your account.
+						</p>
 
 						<form method="POST" action="?/enrollMfa" use:svelteEnhance>
 							<Button type="submit">
