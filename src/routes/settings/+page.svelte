@@ -24,19 +24,19 @@
 		invalidateAll: false,
 		validators: zod4Client(updateProfileSchema)
 	});
-	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage, tainted: emailTainted, constraints: emailConstraints } = superForm(data.emailForm, {
+	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage, tainted: emailTainted, constraints: emailConstraints, allErrors: emailAllErrors } = superForm(data.emailForm, {
 		id: 'email',
 		resetForm: false,
 		invalidateAll: 'force',
 		validators: zod4Client(updateEmailSchema)
 	});
-	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage, tainted: passwordTainted, constraints: passwordConstraints } = superForm(data.passwordForm, {
+	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage, tainted: passwordTainted, constraints: passwordConstraints, allErrors: passwordAllErrors } = superForm(data.passwordForm, {
 		id: 'password',
 		resetForm: true,
 		invalidateAll: false,
 		validators: zod4Client(updatePasswordSchema)
 	});
-	const { form: twoFactorFormData, errors: twoFactorErrors, enhance: twoFactorEnhance, delayed: twoFactorDelayed, message: twoFactorMessage, constraints: twoFactorConstraints } = superForm(data.twoFactorForm, {
+	const { form: twoFactorFormData, errors: twoFactorErrors, enhance: twoFactorEnhance, delayed: twoFactorDelayed, message: twoFactorMessage, constraints: twoFactorConstraints, allErrors: twoFactorAllErrors } = superForm(data.twoFactorForm, {
 		id: 'twoFactor',
 		resetForm: false,
 		invalidateAll: 'force',
@@ -205,7 +205,7 @@
 							You'll receive a verification email at your new address.
 						</p>
 
-						<Button type="submit" disabled={$emailDelayed || !$emailTainted}>
+						<Button type="submit" disabled={$emailDelayed || !$emailTainted || $emailAllErrors.length > 0}>
 							Update Email
 						</Button>
 					</form>
@@ -214,7 +214,7 @@
 				<!-- Password Tab -->
 				<Tabs.Content value="password">
 
-					<form method="POST" action="?/updatePassword" use:passwordEnhance class="space-y-4">
+					<form method="POST" action="?/updatePassword" use:passwordEnhance novalidate class="space-y-4">
 						<div class="space-y-2">
 							<Label for="currentPassword">Current password</Label>
 							<Input
@@ -257,7 +257,7 @@
 							{/if}
 						</div>
 
-						<Button type="submit" disabled={$passwordDelayed || !$passwordTainted}>
+						<Button type="submit" disabled={$passwordDelayed || !$passwordTainted || $passwordAllErrors.length > 0}>
 							Update Password
 						</Button>
 					</form>
@@ -309,7 +309,7 @@
 								<code class="text-sm text-gray-900">{mfaEnrollment.secret}</code>
 							</div>
 
-							<form method="POST" action="?/verifyMfa" use:twoFactorEnhance class="space-y-4">
+							<form method="POST" action="?/verifyMfa" use:twoFactorEnhance novalidate class="space-y-4">
 								<input type="hidden" name="factorId" value={mfaEnrollment.id} />
 
 								<div class="space-y-2">
@@ -327,7 +327,7 @@
 								</div>
 
 								<div class="flex gap-2">
-									<Button type="submit" disabled={$twoFactorDelayed}>
+									<Button type="submit" disabled={$twoFactorDelayed || $twoFactorAllErrors.length > 0}>
 										Verify & Enable
 									</Button>
 									<Button
