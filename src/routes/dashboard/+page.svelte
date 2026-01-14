@@ -26,7 +26,7 @@
 			</div>
 		</div>
 
-		<Card>
+		<Card class="p-8">
 			<h2 class="mb-4 text-xl font-semibold">Welcome back!</h2>
 			<div class="space-y-2 text-sm text-gray-600">
 				<p>

@@ -21,7 +21,7 @@
 			<h1 class="text-3xl font-bold text-gray-900">Email Verification</h1>
 		</div>
 
-		<Card>
+		<Card class="p-8">
 			{#if data.success}
 				<div class="text-center">
 					<a href="/dashboard">

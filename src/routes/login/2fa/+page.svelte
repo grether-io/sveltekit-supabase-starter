@@ -37,7 +37,7 @@
 			</p>
 		</div>
 
-		<Card>
+		<Card class="p-8">
 
 			<form method="POST" use:enhance novalidate class="space-y-6">
 				<div class="space-y-2">

@@ -112,7 +112,7 @@
 			</a>
 		</div>
 
-		<Card>
+		<Card class="p-8">
 			<Tabs.Root bind:value={activeTab}>
 				<Tabs.List class="mb-6 flex gap-4 border-b border-gray-200">
 					<Tabs.Trigger

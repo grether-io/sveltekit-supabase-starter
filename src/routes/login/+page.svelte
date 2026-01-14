@@ -34,7 +34,7 @@
 			</p>
 		</div>
 
-		<Card>
+		<Card class="p-8">
 			<form method="POST" use:enhance novalidate class="space-y-4">
 				<Form.ElementField {form} name="email">
 					<Form.Control>
