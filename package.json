@@ -12,7 +12,8 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"s": "vite dev --open"
+		"s": "vite dev",
+		"so": "vite dev --open"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
