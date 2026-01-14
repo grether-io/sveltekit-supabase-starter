@@ -5,16 +5,17 @@
 	import { Card } from "$lib/components/ui/card";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
-	import * as Form from "$lib/components/ui/form";
+	import * as Field from "$lib/components/ui/field";
 	import { loginSchema } from '$lib/schemas/auth';
 
 	let { data } = $props();
 
-	const form = superForm(data.form, {
-		validators: zod4Client(loginSchema)
-	});
+	const { form, enhance, delayed, message, constraints, errors, allErrors } = $derived.by(() =>
+		superForm(data.form, {
+			validators: zod4Client(loginSchema)
+		})
+	);
 
-	const { enhance, delayed, message, constraints , allErrors } = form;
 
 	// Show toast notification when there's a message
 	$effect(() => {
@@ -35,40 +36,53 @@
 		</div>
 
 		<Card class="p-8">
-			<form method="POST" use:enhance novalidate class="space-y-4">
-				<Form.ElementField {form} name="email">
-					<Form.Control>
-						<Form.Label>Email</Form.Label>
-						<Input
-							type="email"
-							placeholder="you@example.com"
-							{...constraints}
-						/>
-						<Form.FieldErrors />
-					</Form.Control>
-				</Form.ElementField>
+			<form method="POST" use:enhance novalidate>
+				<Field.Group>
+					<Field.Set>
+						<Field.Legend>Sign in to your account</Field.Legend>
+						<Field.Description>
+							Enter your credentials to access your account
+						</Field.Description>
+						<Field.Group>
+							<Field.Field>
+								<Field.Label for="login-email">Email</Field.Label>
+								<Input
+									id="login-email"
+									name="email"
+									type="email"
+									placeholder="you@example.com"
+									bind:value={$form.email}
+									{...$constraints.email}
+								/>
+								<Field.Error errors={$errors.email?.map(msg => ({ message: msg }))} />
+							</Field.Field>
 
-				<Form.ElementField {form} name="password">
-					<Form.Control>
-						<Form.Label>Password</Form.Label>
-						<Input
-							type="password"
-							placeholder="••••••••"
-							{...constraints}
-						/>
-						<Form.FieldErrors />
-					</Form.Control>
-				</Form.ElementField>
+							<Field.Field>
+								<Field.Label for="login-password">Password</Field.Label>
+								<Input
+									id="login-password"
+									name="password"
+									type="password"
+									placeholder="••••••••"
+									bind:value={$form.password}
+									{...$constraints.password}
+								/>
+								<Field.Error errors={$errors.password?.map(msg => ({ message: msg }))} />
+								<Field.Description>
+									<a href="/forgot-password" class="font-medium text-blue-600 hover:text-blue-500">
+										Forgot password?
+									</a>
+								</Field.Description>
+							</Field.Field>
+						</Field.Group>
+					</Field.Set>
 
-				<div class="flex items-center justify-between text-sm">
-					<a href="/forgot-password" class="font-medium text-blue-600 hover:text-blue-500">
-						Forgot password?
-					</a>
-				</div>
-
-				<Button type="submit" class="w-full" disabled={$delayed || $allErrors.length > 0}>
-					Sign in
-				</Button>
+					<Field.Field orientation="horizontal">
+						<Button type="submit" class="w-full" disabled={$delayed || $allErrors.length > 0}>
+							Sign in
+						</Button>
+					</Field.Field>
+				</Field.Group>
 			</form>
 		</Card>
 	</div>

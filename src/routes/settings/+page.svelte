@@ -6,7 +6,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card } from "$lib/components/ui/card";
 	import { Input } from "$lib/components/ui/input";
-	import { Label } from "$lib/components/ui/label";
+	import * as Field from "$lib/components/ui/field";
 	import * as Tabs from "$lib/components/ui/tabs";
 	import {zod4Client} from "sveltekit-superforms/adapters";
 	import {
@@ -18,30 +18,38 @@
 
 	let { data, form: actionResult } = $props();
 
-	const { form: profileFormData, errors: profileErrors, enhance: profileEnhance, delayed: profileDelayed, message: profileMessage, tainted: profileTainted, constraints: profileConstraints, allErrors: profileAllErrors } = superForm(data.profileForm, {
-		id: 'profile',
-		resetForm: false,
-		invalidateAll: false,
-		validators: zod4Client(updateProfileSchema)
-	});
-	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage, tainted: emailTainted, constraints: emailConstraints, allErrors: emailAllErrors } = superForm(data.emailForm, {
-		id: 'email',
-		resetForm: false,
-		invalidateAll: 'force',
-		validators: zod4Client(updateEmailSchema)
-	});
-	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage, tainted: passwordTainted, constraints: passwordConstraints, allErrors: passwordAllErrors } = superForm(data.passwordForm, {
-		id: 'password',
-		resetForm: true,
-		invalidateAll: false,
-		validators: zod4Client(updatePasswordSchema)
-	});
-	const { form: twoFactorFormData, errors: twoFactorErrors, enhance: twoFactorEnhance, delayed: twoFactorDelayed, message: twoFactorMessage, constraints: twoFactorConstraints, allErrors: twoFactorAllErrors } = superForm(data.twoFactorForm, {
-		id: 'twoFactor',
-		resetForm: false,
-		invalidateAll: 'force',
-		validators: zod4Client(verifyTwoFactorSetupSchema)
-	});
+	const { form: profileFormData, errors: profileErrors, enhance: profileEnhance, delayed: profileDelayed, message: profileMessage, tainted: profileTainted, constraints: profileConstraints, allErrors: profileAllErrors } = $derived.by(() =>
+		superForm(data.profileForm, {
+			id: 'profile',
+			resetForm: false,
+			invalidateAll: false,
+			validators: zod4Client(updateProfileSchema)
+		})
+	);
+	const { form: emailFormData, errors: emailErrors, enhance: emailEnhance, delayed: emailDelayed, message: emailMessage, tainted: emailTainted, constraints: emailConstraints, allErrors: emailAllErrors } = $derived.by(() =>
+		superForm(data.emailForm, {
+			id: 'email',
+			resetForm: false,
+			invalidateAll: 'force',
+			validators: zod4Client(updateEmailSchema)
+		})
+	);
+	const { form: passwordFormData, errors: passwordErrors, enhance: passwordEnhance, delayed: passwordDelayed, message: passwordMessage, tainted: passwordTainted, constraints: passwordConstraints, allErrors: passwordAllErrors } = $derived.by(() =>
+		superForm(data.passwordForm, {
+			id: 'password',
+			resetForm: true,
+			invalidateAll: false,
+			validators: zod4Client(updatePasswordSchema)
+		})
+	);
+	const { form: twoFactorFormData, errors: twoFactorErrors, enhance: twoFactorEnhance, delayed: twoFactorDelayed, message: twoFactorMessage, constraints: twoFactorConstraints, allErrors: twoFactorAllErrors } = $derived.by(() =>
+		superForm(data.twoFactorForm, {
+			id: 'twoFactor',
+			resetForm: false,
+			invalidateAll: 'force',
+			validators: zod4Client(verifyTwoFactorSetupSchema)
+		})
+	);
 
 	let activeTab = $state('profile');
 	let mfaEnrollment = $state<any>(null);
@@ -143,123 +151,143 @@
 
 				<!-- Profile Tab -->
 				<Tabs.Content value="profile">
-
 					<form
 						method="POST"
 						action="?/updateProfile"
 						use:profileEnhance novalidate
-						class="space-y-4"
 					>
-						<div class="grid grid-cols-2 gap-4">
-							<div class="space-y-2">
-								<Label for="firstname">First name</Label>
-								<Input
-									id="firstname"
-									name="firstname"
-									bind:value={$profileFormData.firstname}
-									{...$profileConstraints.firstname}
-								/>
-								{#if $profileErrors.firstname}
-									<p class="text-sm text-destructive">{$profileErrors.firstname[0]}</p>
-								{/if}
-							</div>
-							<div class="space-y-2">
-								<Label for="lastname">Last name</Label>
-								<Input
-									id="lastname"
-									name="lastname"
-									bind:value={$profileFormData.lastname}
-									{...$profileConstraints.lastname}
-								/>
-								{#if $profileErrors.lastname}
-									<p class="text-sm text-destructive">{$profileErrors.lastname[0]}</p>
-								{/if}
-							</div>
-						</div>
+						<Field.Group>
+							<Field.Set>
+								<Field.Legend>Update your profile</Field.Legend>
+								<Field.Description>
+									Change your profile information
+								</Field.Description>
+								<Field.Group>
+									<div class="grid grid-cols-2 gap-4">
+										<Field.Field>
+											<Field.Label for="settings-firstname">First name</Field.Label>
+											<Input
+												id="settings-firstname"
+												name="firstname"
+												bind:value={$profileFormData.firstname}
+												{...$profileConstraints.firstname}
+											/>
+											<Field.Error errors={$profileErrors.firstname?.map(msg => ({ message: msg }))} />
+										</Field.Field>
 
-						<Button type="submit" disabled={$profileDelayed || !$profileTainted || $profileAllErrors.length > 0}>
-							Update Profile
-						</Button>
+										<Field.Field>
+											<Field.Label for="settings-lastname">Last name</Field.Label>
+											<Input
+												id="settings-lastname"
+												name="lastname"
+												bind:value={$profileFormData.lastname}
+												{...$profileConstraints.lastname}
+											/>
+											<Field.Error errors={$profileErrors.lastname?.map(msg => ({ message: msg }))} />
+										</Field.Field>
+									</div>
+								</Field.Group>
+							</Field.Set>
+
+							<Field.Field orientation="horizontal">
+								<Button type="submit" disabled={$profileDelayed || !$profileTainted || $profileAllErrors.length > 0}>
+									Update Profile
+								</Button>
+							</Field.Field>
+						</Field.Group>
 					</form>
 				</Tabs.Content>
 
 				<!-- Email Tab -->
 				<Tabs.Content value="email">
+					<form method="POST" action="?/updateEmail" use:emailEnhance novalidate>
+						<Field.Group>
+							<Field.Set>
+								<Field.Legend>Update your email</Field.Legend>
+								<Field.Description>
+									You'll receive a verification email at your new address
+								</Field.Description>
+								<Field.Group>
+									<Field.Field>
+										<Field.Label for="settings-email">Email address</Field.Label>
+										<Input
+											id="settings-email"
+											name="email"
+											type="email"
+											bind:value={$emailFormData.email}
+											{...$emailConstraints.email}
+										/>
+										<Field.Error errors={$emailErrors.email?.map(msg => ({ message: msg }))} />
+									</Field.Field>
+								</Field.Group>
+							</Field.Set>
 
-					<form method="POST" action="?/updateEmail" use:emailEnhance novalidate class="space-y-4">
-						<div class="space-y-2">
-							<Label for="email">Email address</Label>
-							<Input
-								id="email"
-								name="email"
-								type="email"
-								bind:value={$emailFormData.email}
-								{...$emailConstraints.email}
-							/>
-							{#if $emailErrors.email}
-								<p class="text-sm text-destructive">{$emailErrors.email[0]}</p>
-							{/if}
-						</div>
-
-						<p class="text-sm text-gray-600">
-							You'll receive a verification email at your new address.
-						</p>
-
-						<Button type="submit" disabled={$emailDelayed || !$emailTainted || $emailAllErrors.length > 0}>
-							Update Email
-						</Button>
+							<Field.Field orientation="horizontal">
+								<Button type="submit" disabled={$emailDelayed || !$emailTainted || $emailAllErrors.length > 0}>
+									Update Email
+								</Button>
+							</Field.Field>
+						</Field.Group>
 					</form>
 				</Tabs.Content>
 
 				<!-- Password Tab -->
 				<Tabs.Content value="password">
+					<form method="POST" action="?/updatePassword" use:passwordEnhance novalidate>
+						<Field.Group>
+							<Field.Set>
+								<Field.Legend>Change your password</Field.Legend>
+								<Field.Description>
+									Enter your current password and choose a new one
+								</Field.Description>
+								<Field.Group>
+									<Field.Field>
+										<Field.Label for="settings-currentPassword">Current password</Field.Label>
+										<Input
+											id="settings-currentPassword"
+											name="currentPassword"
+											type="password"
+											bind:value={$passwordFormData.currentPassword}
+											{...$passwordConstraints.currentPassword}
+										/>
+										<Field.Error errors={$passwordErrors.currentPassword?.map(msg => ({ message: msg }))} />
+									</Field.Field>
 
-					<form method="POST" action="?/updatePassword" use:passwordEnhance novalidate class="space-y-4">
-						<div class="space-y-2">
-							<Label for="currentPassword">Current password</Label>
-							<Input
-								id="currentPassword"
-								name="currentPassword"
-								type="password"
-								bind:value={$passwordFormData.currentPassword}
-								{...$passwordConstraints.currentPassword}
-							/>
-							{#if $passwordErrors.currentPassword}
-								<p class="text-sm text-destructive">{$passwordErrors.currentPassword[0]}</p>
-							{/if}
-						</div>
+									<Field.Field>
+										<Field.Label for="settings-newPassword">New password</Field.Label>
+										<Input
+											id="settings-newPassword"
+											name="newPassword"
+											type="password"
+											bind:value={$passwordFormData.newPassword}
+											{...$passwordConstraints.newPassword}
+										/>
+										<Field.Error errors={$passwordErrors.newPassword?.map(msg => ({ message: msg }))} />
+										<Field.Description>
+											Password must be at least 8 characters
+										</Field.Description>
+									</Field.Field>
 
-						<div class="space-y-2">
-							<Label for="newPassword">New password</Label>
-							<Input
-								id="newPassword"
-								name="newPassword"
-								type="password"
-								bind:value={$passwordFormData.newPassword}
-								{...$passwordConstraints.newPassword}
-							/>
-							{#if $passwordErrors.newPassword}
-								<p class="text-sm text-destructive">{$passwordErrors.newPassword[0]}</p>
-							{/if}
-						</div>
+									<Field.Field>
+										<Field.Label for="settings-confirmPassword">Confirm new password</Field.Label>
+										<Input
+											id="settings-confirmPassword"
+											name="confirmPassword"
+											type="password"
+											bind:value={$passwordFormData.confirmPassword}
+											{...$passwordConstraints.confirmPassword}
+										/>
+										<Field.Error errors={$passwordErrors.confirmPassword?.map(msg => ({ message: msg }))} />
+									</Field.Field>
+								</Field.Group>
+							</Field.Set>
 
-						<div class="space-y-2">
-							<Label for="confirmPassword">Confirm new password</Label>
-							<Input
-								id="confirmPassword"
-								name="confirmPassword"
-								type="password"
-								bind:value={$passwordFormData.confirmPassword}
-								{...$passwordConstraints.confirmPassword}
-							/>
-							{#if $passwordErrors.confirmPassword}
-								<p class="text-sm text-destructive">{$passwordErrors.confirmPassword[0]}</p>
-							{/if}
-						</div>
-
-						<Button type="submit" disabled={$passwordDelayed || !$passwordTainted || $passwordAllErrors.length > 0}>
-							Update Password
-						</Button>
+							<Field.Field orientation="horizontal">
+								<Button type="submit" disabled={$passwordDelayed || !$passwordTainted || $passwordAllErrors.length > 0}>
+									Update Password
+								</Button>
+							</Field.Field>
+						</Field.Group>
 					</form>
 				</Tabs.Content>
 
@@ -309,38 +337,48 @@
 								<code class="text-sm text-gray-900">{mfaEnrollment.secret}</code>
 							</div>
 
-							<form method="POST" action="?/verifyMfa" use:twoFactorEnhance novalidate class="space-y-4">
+							<form method="POST" action="?/verifyMfa" use:twoFactorEnhance novalidate>
 								<input type="hidden" name="factorId" value={mfaEnrollment.id} />
 
-								<div class="space-y-2">
-									<Label for="code">Verification code</Label>
-									<Input
-										id="code"
-										name="code"
-										bind:value={$twoFactorFormData.code}
-										placeholder="000000"
-										{...$twoFactorConstraints.code}
-									/>
-									{#if $twoFactorErrors.code}
-										<p class="text-sm text-destructive">{$twoFactorErrors.code[0]}</p>
-									{/if}
-								</div>
+								<Field.Group>
+									<Field.Set>
+										<Field.Legend>Verify your code</Field.Legend>
+										<Field.Description>
+											Enter the 6-digit code from your authenticator app to complete setup
+										</Field.Description>
+										<Field.Group>
+											<Field.Field>
+												<Field.Label for="settings-2fa-code">Verification code</Field.Label>
+												<Input
+													id="settings-2fa-code"
+													name="code"
+													bind:value={$twoFactorFormData.code}
+													placeholder="000000"
+													{...$twoFactorConstraints.code}
+												/>
+												<Field.Error errors={$twoFactorErrors.code?.map(msg => ({ message: msg }))} />
+											</Field.Field>
+										</Field.Group>
+									</Field.Set>
 
-								<div class="flex gap-2">
-									<Button type="submit" disabled={$twoFactorDelayed || $twoFactorAllErrors.length > 0}>
-										Verify & Enable
-									</Button>
-									<Button
-										type="button"
-										variant="outline"
-										onclick={() => {
-											isEnrolling = false;
-											mfaEnrollment = null;
-										}}
-									>
-										Cancel
-									</Button>
-								</div>
+									<Field.Field orientation="horizontal">
+										<div class="flex gap-2">
+											<Button type="submit" disabled={$twoFactorDelayed || $twoFactorAllErrors.length > 0}>
+												Verify & Enable
+											</Button>
+											<Button
+												type="button"
+												variant="outline"
+												onclick={() => {
+													isEnrolling = false;
+													mfaEnrollment = null;
+												}}
+											>
+												Cancel
+											</Button>
+										</div>
+									</Field.Field>
+								</Field.Group>
 							</form>
 						</div>
 					{:else}

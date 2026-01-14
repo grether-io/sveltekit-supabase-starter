@@ -5,12 +5,12 @@
 	import { Card } from "$lib/components/ui/card";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
-	import { Label } from "$lib/components/ui/label";
+	import * as Field from "$lib/components/ui/field";
 	import { signupSchema } from '$lib/schemas/auth';
 
 	let { data } = $props();
 
-	const { form, errors, enhance, message, constraints, allErrors } = $derived.by(() => superForm(data.form, {
+	const { form, errors, enhance, delayed, message, constraints, allErrors } = $derived.by(() => superForm(data.form, {
 		validators: zod4Client(signupSchema)
 	}));
 
@@ -33,68 +33,75 @@
 		</div>
 
 		<Card class="p-8">
-			<form method="POST" use:enhance novalidate class="space-y-4">
-				<div class="grid grid-cols-2 gap-4">
-					<div class="space-y-2">
-						<Label for="firstname">First name</Label>
-						<Input
-							id="firstname"
-							name="firstname"
-							bind:value={$form.firstname}
-							{...$constraints.firstname}
-						/>
-						{#if $errors.firstname}
-							<p class="text-sm text-destructive">{$errors.firstname[0]}</p>
-						{/if}
-					</div>
-					<div class="space-y-2">
-						<Label for="lastname">Last name</Label>
-						<Input
-							id="lastname"
-							name="lastname"
-							bind:value={$form.lastname}
-							{...$constraints.lastname}
-						/>
-						{#if $errors.lastname}
-							<p class="text-sm text-destructive">{$errors.lastname[0]}</p>
-						{/if}
-					</div>
-				</div>
+			<form method="POST" use:enhance novalidate>
+				<Field.Group>
+					<Field.Set>
+						<Field.Legend>Create your account</Field.Legend>
+						<Field.Description>
+							Fill in your details to get started
+						</Field.Description>
+						<Field.Group>
+							<div class="grid grid-cols-2 gap-4">
+								<Field.Field>
+									<Field.Label for="signup-firstname">First name</Field.Label>
+									<Input
+										id="signup-firstname"
+										name="firstname"
+										bind:value={$form.firstname}
+										{...$constraints.firstname}
+									/>
+									<Field.Error errors={$errors.firstname?.map(msg => ({ message: msg }))} />
+								</Field.Field>
 
+								<Field.Field>
+									<Field.Label for="signup-lastname">Last name</Field.Label>
+									<Input
+										id="signup-lastname"
+										name="lastname"
+										bind:value={$form.lastname}
+										{...$constraints.lastname}
+									/>
+									<Field.Error errors={$errors.lastname?.map(msg => ({ message: msg }))} />
+								</Field.Field>
+							</div>
 
-				<div class="space-y-2">
-					<Label for="email">Email</Label>
-					<Input
-						id="email"
-						name="email"
-						type="email"
-						bind:value={$form.email}
-						placeholder="you@example.com"
-						{...$constraints.email}
-					/>
-					{#if $errors.email}
-						<p class="text-sm text-destructive">{$errors.email[0]}</p>
-					{/if}
-				</div>
+							<Field.Field>
+								<Field.Label for="signup-email">Email</Field.Label>
+								<Input
+									id="signup-email"
+									name="email"
+									type="email"
+									placeholder="you@example.com"
+									bind:value={$form.email}
+									{...$constraints.email}
+								/>
+								<Field.Error errors={$errors.email?.map(msg => ({ message: msg }))} />
+							</Field.Field>
 
-				<div class="space-y-2">
-					<Label for="password">Password</Label>
-					<Input
-						id="password"
-						name="password"
-						type="password"
-						bind:value={$form.password}
-						placeholder="••••••••"
-						{...$constraints.password}
-					/>
-					{#if $errors.password}
-						<p class="text-sm text-destructive">{$errors.password[0]}</p>
-					{/if}
-				</div>
+							<Field.Field>
+								<Field.Label for="signup-password">Password</Field.Label>
+								<Input
+									id="signup-password"
+									name="password"
+									type="password"
+									placeholder="••••••••"
+									bind:value={$form.password}
+									{...$constraints.password}
+								/>
+								<Field.Error errors={$errors.password?.map(msg => ({ message: msg }))} />
+								<Field.Description>
+									Password must be at least 8 characters
+								</Field.Description>
+							</Field.Field>
+						</Field.Group>
+					</Field.Set>
 
-				<Button type="submit" class="w-full" disabled={$allErrors.length > 0}>
-					Create account
-				</Button>
+					<Field.Field orientation="horizontal">
+						<Button type="submit" class="w-full" disabled={$delayed || $allErrors.length > 0}>
+							Create account
+						</Button>
+					</Field.Field>
+				</Field.Group>
 			</form>
 		</Card>
 	</div>

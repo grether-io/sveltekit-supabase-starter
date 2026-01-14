@@ -5,14 +5,16 @@
 	import { Card } from "$lib/components/ui/card";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
-	import { Label } from "$lib/components/ui/label";
+	import * as Field from "$lib/components/ui/field";
 	import { forgotPasswordSchema } from '$lib/schemas/auth';
 
 	let { data } = $props();
 
-	const { form, errors, enhance, delayed, message, constraints, allErrors } = superForm(data.form, {
-		validators: zod4Client(forgotPasswordSchema)
-	});
+	const { form, errors, enhance, delayed, message, constraints, allErrors } = $derived.by(() =>
+		superForm(data.form, {
+			validators: zod4Client(forgotPasswordSchema)
+		})
+	);
 
 	// Show toast notification when there's a message
 	$effect(() => {
@@ -37,30 +39,41 @@
 		</div>
 
 		<Card class="p-8">
+			<form method="POST" use:enhance novalidate>
+				<Field.Group>
+					<Field.Set>
+						<Field.Legend>Reset your password</Field.Legend>
+						<Field.Description>
+							Enter your email and we'll send you a reset link
+						</Field.Description>
+						<Field.Group>
+							<Field.Field>
+								<Field.Label for="forgot-email">Email</Field.Label>
+								<Input
+									id="forgot-email"
+									name="email"
+									type="email"
+									placeholder="you@example.com"
+									bind:value={$form.email}
+									{...$constraints.email}
+								/>
+								<Field.Error errors={$errors.email?.map(msg => ({ message: msg }))} />
+							</Field.Field>
+						</Field.Group>
+					</Field.Set>
 
-			<form method="POST" use:enhance novalidate class="space-y-4">
-				<div class="space-y-2">
-					<Label for="email">Email</Label>
-					<Input
-						id="email"
-						name="email"
-						type="email"
-						bind:value={$form.email}
-						placeholder="you@example.com"
-						{...$constraints.email}
-					/>
-					{#if $errors.email}
-						<p class="text-sm text-destructive">{$errors.email[0]}</p>
-					{/if}
-				</div>
+					<Field.Field orientation="horizontal">
+						<Button type="submit" class="w-full" disabled={$delayed || $allErrors.length > 0}>
+							Send reset link
+						</Button>
+					</Field.Field>
 
-				<Button type="submit" class="w-full" disabled={$delayed || $allErrors.length > 0}>
-					Send reset link
-				</Button>
+					<Field.Separator />
 
-				<div class="text-center text-sm">
-					<a href="/login" class="text-gray-600 hover:text-gray-900">Back to login</a>
-				</div>
+					<div class="text-center text-sm">
+						<a href="/login" class="text-gray-600 hover:text-gray-900">Back to login</a>
+					</div>
+				</Field.Group>
 			</form>
 		</Card>
 	</div>
