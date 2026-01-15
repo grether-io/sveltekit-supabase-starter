@@ -3,6 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { createSupabaseClient } from '$lib/supabase';
 	import { goto } from '$app/navigation';
+	import { ROLE_LEVELS } from '$lib/constants/roles';
 
 	let { data } = $props();
 
@@ -12,6 +13,10 @@
 		await supabase.auth.signOut();
 		await goto('/login');
 	}
+
+	// Check if user is admin or higher
+	const isAdmin = $derived((data.user?.app_metadata?.role_level ?? 0) >= ROLE_LEVELS.ADMIN);
+
 </script>
 
 <div class="min-h-screen bg-gray-50 px-4 py-12">
@@ -19,6 +24,11 @@
 		<div class="mb-8 flex items-center justify-between">
 			<h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
 			<div class="flex gap-4">
+				{#if isAdmin}
+					<a href="/admin/users">
+						<Button variant="outline">Admin</Button>
+					</a>
+				{/if}
 				<a href="/settings">
 					<Button variant="outline">Settings</Button>
 				</a>

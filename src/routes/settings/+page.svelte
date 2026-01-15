@@ -6,6 +6,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card } from "$lib/components/ui/card";
 	import { Input } from "$lib/components/ui/input";
+	import { Badge } from "$lib/components/ui/badge";
 	import * as Field from "$lib/components/ui/field";
 	import * as Tabs from "$lib/components/ui/tabs";
 	import {zod4Client} from "sveltekit-superforms/adapters";
@@ -15,6 +16,7 @@
 		updateProfileSchema,
 		verifyTwoFactorSetupSchema
 	} from '$lib/schemas/auth';
+	import { ROLE_BADGE_VARIANTS, getRoleDescription } from '$lib/constants/roles';
 
 	let { data, form: actionResult } = $props();
 
@@ -142,6 +144,12 @@
 						Password
 					</Tabs.Trigger>
 					<Tabs.Trigger
+						value="role"
+						class="border-b-2 px-4 py-2 text-sm font-medium transition-colors data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 data-[state=inactive]:border-transparent data-[state=inactive]:text-gray-600"
+					>
+						Role
+					</Tabs.Trigger>
+					<Tabs.Trigger
 						value="2fa"
 						class="border-b-2 px-4 py-2 text-sm font-medium transition-colors data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 data-[state=inactive]:border-transparent data-[state=inactive]:text-gray-600"
 					>
@@ -231,7 +239,32 @@
 					</form>
 				</Tabs.Content>
 
-				<!-- Password Tab -->
+				<!-- Role Tab -->
+				<Tabs.Content value="role">
+					<div class="space-y-6">
+						<div>
+							<h3 class="text-lg font-medium">Your Role</h3>
+							<p class="text-sm text-muted-foreground mt-1">
+								Your current role and permissions in the system.
+							</p>
+						</div>
+
+						{#if data.userRole}
+							<div class="flex items-center gap-3">
+								<Badge variant={ROLE_BADGE_VARIANTS[data.userRole.level]} class="text-base px-4 py-2">
+									{data.userRole.name}
+								</Badge>
+							</div>
+							<p class="text-sm text-muted-foreground">
+								{getRoleDescription(data.userRole.level)}
+							</p>
+						{:else}
+							<p class="text-sm text-muted-foreground">No role assigned.</p>
+						{/if}
+					</div>
+				</Tabs.Content>
+
+				<!-- Two-Factor Auth Tab -->
 				<Tabs.Content value="password">
 					<form method="POST" action="?/updatePassword" use:passwordEnhance novalidate>
 						<Field.Group>
