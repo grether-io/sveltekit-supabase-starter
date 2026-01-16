@@ -4,13 +4,20 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { resetPasswordSchema } from '$lib/schemas/auth';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	// Check if we have a token in the URL
 	const token = url.searchParams.get('token');
 	const type = url.searchParams.get('type');
 
 	if (!token || type !== 'recovery') {
-		redirect(303, '/login');
+		redirect(303, '/forgot-password?error=invalid');
+	}
+
+	// Verify session is in recovery state
+	const { data: { session }, error } = await supabase.auth.getSession();
+
+	if (error || !session) {
+		redirect(303, '/forgot-password?error=expired');
 	}
 
 	const form = await superValidate(zod4(resetPasswordSchema));
