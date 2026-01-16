@@ -123,7 +123,6 @@ For more details, see the [Supabase CLI documentation](https://supabase.com/docs
 
 - **PUBLIC_SUPABASE_URL**: Your Supabase project URL
 - **PUBLIC_SUPABASE_ANON_KEY**: Supabase anon public key
-- **PRIVATE_SUPABASE_SERVICE_ROLE**: Supabase service role key (server-side only)
 
 All environment variables should be set in `.env.local` (never commit secrets to version control).
 
