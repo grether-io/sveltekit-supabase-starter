@@ -1639,7 +1639,7 @@ flatted@^3.2.9:
 
 formsnap@^2.0.1:
   version "2.0.1"
-  resolved "https://registry.yarnpkg.com/formsnap/-/formsnap-2.0.1.tgz#3bceac3896121ed968403c864e8724ebb3ec69bb"
+  resolved "https://registry.npmjs.org/formsnap/-/formsnap-2.0.1.tgz"
   integrity sha512-iJSe4YKd/W6WhLwKDVJU9FQeaJRpEFuolhju7ZXlRpUVyDdqFdMP8AUBICgnVvQPyP41IPAlBa/v0Eo35iE6wQ==
   dependencies:
     svelte-toolbelt "^0.5.0"
@@ -2365,7 +2365,7 @@ svelte-toolbelt@^0.10.6:
 
 svelte-toolbelt@^0.5.0:
   version "0.5.0"
-  resolved "https://registry.yarnpkg.com/svelte-toolbelt/-/svelte-toolbelt-0.5.0.tgz#c5eeec1c29e89a7b8faf35d60868988cd0e7caf0"
+  resolved "https://registry.npmjs.org/svelte-toolbelt/-/svelte-toolbelt-0.5.0.tgz"
   integrity sha512-t3tenZcnfQoIeRuQf/jBU7bvTeT3TGkcEE+1EUr5orp0lR7NEpprflpuie3x9Dn0W9nOKqs3HwKGJeeN5Ok1sQ==
   dependencies:
     clsx "^2.1.1"
