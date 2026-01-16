@@ -4,7 +4,7 @@
 	let { data } = $props();
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+<div class="flex items-center justify-center bg-linear-to-br" style="min-height: calc(100vh - 4rem);">
 	<div class="max-w-md w-full space-y-8 p-8">
 		<div class="text-center">
 			<h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">

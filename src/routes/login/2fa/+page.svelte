@@ -30,11 +30,11 @@
 	});
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+<div class="flex items-center justify-center px-4 py-12" style="min-height: calc(100vh - 4rem);">
 	<div class="w-full max-w-md">
 		<div class="mb-8 text-center">
-			<h1 class="text-3xl font-bold text-gray-900">Two-Factor Authentication</h1>
-			<p class="mt-2 text-sm text-gray-600">
+			<h1 class="text-3xl font-bold">Two-Factor Authentication</h1>
+			<p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
 				Enter the 6-digit code from your authenticator app
 			</p>
 		</div>

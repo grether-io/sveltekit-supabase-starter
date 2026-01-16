@@ -15,10 +15,10 @@
 	});
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+<div class="flex items-center justify-center px-4 py-12" style="min-height: calc(100vh - 4rem);">
 	<div class="w-full max-w-md">
 		<div class="mb-8 text-center">
-			<h1 class="text-3xl font-bold text-gray-900">Email Verification</h1>
+			<h1 class="text-3xl font-bold">Email Verification</h1>
 		</div>
 
 		<Card class="p-8">
@@ -35,7 +35,7 @@
 					</a>
 				</div>
 			{:else}
-				<div class="text-center text-gray-600">
+				<div class="text-center text-gray-600 dark:text-gray-400">
 					Verifying your email...
 				</div>
 			{/if}
