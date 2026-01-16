@@ -12,8 +12,10 @@
 	import Users from '@lucide/svelte/icons/users';
 	import Moon from '@lucide/svelte/icons/moon';
 	import Sun from '@lucide/svelte/icons/sun';
+	import Home from '@lucide/svelte/icons/home';
 	import { toggleMode } from 'mode-watcher';
 	import type { User } from '@supabase/supabase-js';
+	import { useSidebar } from '$lib/components/ui/sidebar/context.svelte';
 
 	interface Props {
 		user: User | null;
@@ -23,6 +25,7 @@
 	let { user, userRole }: Props = $props();
 
 	const supabase = createSupabaseClient();
+	const sidebar = useSidebar();
 
 	async function handleSignOut() {
 		await supabase.auth.signOut();
@@ -58,8 +61,8 @@
 
 	// Get user initials from metadata or email
 	function getUserInitials(): string {
-		const firstname = user?.user_metadata?.firstname;
-		const lastname = user?.user_metadata?.lastname;
+		const firstname = user?.user_metadata?.first_name;
+		const lastname = user?.user_metadata?.last_name;
 
 		if (firstname && lastname) {
 			return `${firstname.charAt(0)}${lastname.charAt(0)}`.toUpperCase();
@@ -84,12 +87,11 @@
 	<Sidebar.Header>
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
-				<Sidebar.MenuButton size="lg">
+				<Sidebar.MenuButton tooltipContent="SvelteKit">
 					{#snippet child({ props })}
 						<a href="/" {...props}>
-							<div class="grid flex-1 text-left text-sm leading-tight">
-								<span class="truncate font-semibold">SvelteKit</span>
-							</div>
+							<Home />
+							<span>SvelteKit</span>
 						</a>
 					{/snippet}
 				</Sidebar.MenuButton>
@@ -178,9 +180,9 @@
 								</div>
 								<div class="grid flex-1 text-left text-sm leading-tight">
 									<span class="truncate font-semibold">
-										{#if user?.user_metadata?.firstname && user?.user_metadata?.lastname}
-											{user.user_metadata.firstname}
-											{user.user_metadata.lastname}
+										{#if user?.user_metadata?.first_name && user?.user_metadata?.last_name}
+											{user.user_metadata.first_name}
+											{user.user_metadata.last_name}
 										{:else}
 											{user?.email?.split('@')[0] || 'User'}
 										{/if}
