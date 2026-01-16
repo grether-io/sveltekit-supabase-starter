@@ -21,13 +21,16 @@ declare global {
 	}
 }
 
-// Extend Supabase User type to include role claims in app_metadata
+// Extend Supabase User type to include role claims in app_metadata and user profile in user_metadata
 declare module '@supabase/supabase-js' {
 	interface UserAppMetadata {
 		role?: string;
 		role_level?: number;
-		firstname?: string;
-		lastname?: string;
+	}
+
+	interface UserMetadata {
+		first_name?: string;
+		last_name?: string;
 		display_name?: string;
 	}
 }
