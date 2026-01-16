@@ -170,25 +170,25 @@
 								<Field.Group>
 									<div class="grid grid-cols-2 gap-4">
 										<Field.Field>
-											<Field.Label for="settings-firstname">First name</Field.Label>
+											<Field.Label for="settings-first_name">First name</Field.Label>
 											<Input
-												id="settings-firstname"
-												name="firstname"
-												bind:value={$profileFormData.firstname}
-												{...$profileConstraints.firstname}
+												id="settings-first_name"
+												name="first_name"
+												bind:value={$profileFormData.first_name}
+												{...$profileConstraints.first_name}
 											/>
-											<Field.Error errors={$profileErrors.firstname?.map(msg => ({ message: msg }))} />
+											<Field.Error errors={$profileErrors.first_name?.map(msg => ({ message: msg }))} />
 										</Field.Field>
 
 										<Field.Field>
-											<Field.Label for="settings-lastname">Last name</Field.Label>
+											<Field.Label for="settings-last_name">Last name</Field.Label>
 											<Input
-												id="settings-lastname"
-												name="lastname"
-												bind:value={$profileFormData.lastname}
-												{...$profileConstraints.lastname}
+												id="settings-last_name"
+												name="last_name"
+												bind:value={$profileFormData.last_name}
+												{...$profileConstraints.last_name}
 											/>
-											<Field.Error errors={$profileErrors.lastname?.map(msg => ({ message: msg }))} />
+											<Field.Error errors={$profileErrors.last_name?.map(msg => ({ message: msg }))} />
 										</Field.Field>
 									</div>
 								</Field.Group>
