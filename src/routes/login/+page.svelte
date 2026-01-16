@@ -25,10 +25,10 @@
 	});
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+<div class="flex items-center justify-center px-4 py-12" style="min-height: calc(100vh - 4rem);">
 	<div class="w-full max-w-md">
 		<div class="mb-8 text-center">
-			<h1 class="text-3xl font-bold text-gray-900">Sign in</h1>
+			<h1 class="text-3xl font-bold">Sign in</h1>
 			<p class="mt-2 text-sm text-gray-600">
 				Don't have an account?
 				<a href="/signup" class="font-medium text-blue-600 hover:text-blue-500">Sign up</a>
