@@ -1,6 +1,22 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { PRIVATE_SUPABASE_SERVICE_ROLE } from '$env/static/private';
 import type { Handle } from '@sveltejs/kit';
+
+/**
+ * Create a Supabase admin client with service role key
+ * USE WITH CAUTION: This client bypasses Row Level Security (RLS)
+ * Only use for admin operations like auth.admin.* methods
+ */
+export function createSupabaseAdminClient() {
+	return createClient(PUBLIC_SUPABASE_URL, PRIVATE_SUPABASE_SERVICE_ROLE, {
+		auth: {
+			autoRefreshToken: false,
+			persistSession: false
+		}
+	});
+}
 
 export const createSupabaseServerClient: Handle = async ({ event, resolve }) => {
 	event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
