@@ -2,16 +2,6 @@ import { redirect } from '@sveltejs/kit';
 import { ROLE_LEVELS } from '$lib/constants/roles';
 
 /**
- * Require user to be authenticated
- * Redirects to /login if not authenticated
- */
-export function requireAuth(locals: App.Locals): void {
-	if (!locals.safeGetSession) {
-		throw redirect(303, '/login');
-	}
-}
-
-/**
  * Require user to have minimum role level
  * Redirects to /dashboard if insufficient permissions
  */

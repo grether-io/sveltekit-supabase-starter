@@ -52,17 +52,6 @@ export const ROLE_BADGE_VARIANTS: Record<number, 'default' | 'secondary' | 'dest
 	100: 'destructive'
 } as const;
 
-/**
- * Type helper for role levels
- */
-export type RoleLevel = typeof ROLE_LEVELS[keyof typeof ROLE_LEVELS];
-
-/**
- * Helper to get role name by level
- */
-export function getRoleName(level: number): string {
-	return ROLE_NAMES[level] || 'Unknown';
-}
 
 /**
  * Helper to get role description by level
@@ -70,11 +59,3 @@ export function getRoleName(level: number): string {
 export function getRoleDescription(level: number): string {
 	return ROLE_DESCRIPTIONS[level] || 'No description available';
 }
-
-/**
- * Helper to get badge variant by level
- */
-export function getRoleBadgeVariant(level: number): 'default' | 'secondary' | 'destructive' | 'outline' {
-	return ROLE_BADGE_VARIANTS[level] || 'default';
-}
-
