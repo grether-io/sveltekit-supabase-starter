@@ -113,13 +113,10 @@
 	});
 </script>
 
-<div class="min-h-screen bg-gray-50 px-4 py-12">
+<div class="min-h-screen px-4 py-12">
 	<div class="mx-auto max-w-4xl">
 		<div class="mb-8 flex items-center justify-between">
-			<h1 class="text-3xl font-bold text-gray-900">Settings</h1>
-			<a href="/dashboard">
-				<Button variant="outline">Back to Dashboard</Button>
-			</a>
+			<h1 class="text-3xl font-bold">Settings</h1>
 		</div>
 
 		<Card class="p-8">

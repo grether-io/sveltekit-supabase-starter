@@ -68,13 +68,13 @@
 	}
 </script>
 
-<div class="container mx-auto py-10">
-	<Card>
-		<CardHeader>
-			<CardTitle>User Management</CardTitle>
-			<CardDescription>Manage user roles and permissions</CardDescription>
-		</CardHeader>
-		<CardContent>
+<div class="min-h-screen px-4 py-12">
+	<div class="mx-auto max-w-4xl">
+		<div class="mb-8">
+			<h1 class="text-3xl font-bold">User Management</h1>
+			<p class="text-gray-600 dark:text-gray-400" >Manage user roles and permissions</p>
+		</div>
+
 			{#if data.users.length === 0}
 				<p class="text-sm text-muted-foreground">No users to manage.</p>
 			{:else}
@@ -131,7 +131,6 @@
 					</TableBody>
 				</Table>
 			{/if}
-		</CardContent>
-	</Card>
 </div>
 
+</div>

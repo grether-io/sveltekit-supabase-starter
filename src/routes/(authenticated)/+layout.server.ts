@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import type { LayoutServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
+export const load: LayoutServerLoad = async ({ locals: { safeGetSession, userRole } }) => {
 	const { session, user } = await safeGetSession();
 
 	if (!session) {
@@ -9,7 +9,8 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 	}
 
 	return {
-		user
+		user,
+		userRole
 	};
 };
 

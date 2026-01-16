@@ -1,4 +1,4 @@
-import { redirect, fail } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import {
@@ -9,12 +9,10 @@ import {
 } from '$lib/schemas/auth';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase } }) => {
-	const { session, user } = await safeGetSession();
-
-	if (!session) {
-		redirect(303, '/login');
-	}
+export const load: PageServerLoad = async ({ locals: { supabase }, parent }) => {
+	// Authentication is handled by (authenticated)/+layout.server.ts
+	// Get user from parent layout
+	const { user } = await parent();
 
 	// Load MFA status
 	const { data: factors } = await supabase.auth.mfa.listFactors();
