@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner';
 	import { ROLE_BADGE_VARIANTS } from '$lib/constants/roles';
-	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
 	import { Badge } from '$lib/components/ui/badge';
@@ -9,13 +8,13 @@
 
 	let { data } = $props();
 
-	// Track selected roles for each user
-	let selectedRoles = $state<Record<string, { value: string; label: string } | undefined>>({});
+	// Track selected roles for each user (storing role IDs as strings)
+	let selectedRoles = $state<Record<string, string | undefined>>({});
 
 	// Handle role assignment
 	async function handleAssignRole(userId: string) {
-		const selectedRole = selectedRoles[userId];
-		if (!selectedRole) {
+		const selectedRoleId = selectedRoles[userId];
+		if (!selectedRoleId) {
 			toast.error('Please select a role');
 			return;
 		}
@@ -23,7 +22,7 @@
 		try {
 			const formData = new FormData();
 			formData.append('userId', userId);
-			formData.append('roleId', selectedRole.value);
+			formData.append('roleId', selectedRoleId);
 
 			const response = await fetch('?/assignRole', {
 				method: 'POST',
@@ -61,10 +60,18 @@
 		if (user.user_metadata.display_name) {
 			return user.user_metadata.display_name;
 		}
-		if (user.user_metadata.firstname && user.user_metadata.lastname) {
-			return `${user.user_metadata.firstname} ${user.user_metadata.lastname}`;
+		if (user.user_metadata.first_name && user.user_metadata.last_name) {
+			return `${user.user_metadata.first_name} ${user.user_metadata.last_name}`;
 		}
 		return user.email;
+	}
+
+	// Get selected role name for display in trigger
+	function getSelectedRoleName(userId: string): string {
+		const roleId = selectedRoles[userId];
+		if (!roleId) return 'Select role';
+		const role = data.availableRoles.find(r => r.id === roleId);
+		return role?.name || 'Select role';
 	}
 </script>
 
@@ -100,17 +107,18 @@
 								</TableCell>
 								<TableCell>
 									<Select
+										type="single"
 										bind:value={selectedRoles[user.id]}
 										disabled={user.role.level >= data.currentUserLevel}
 									>
 										<SelectTrigger class="w-45">
 											<span>
-												{selectedRoles[user.id]?.label || 'Select role'}
+												{getSelectedRoleName(user.id)}
 											</span>
 										</SelectTrigger>
 										<SelectContent>
 											{#each data.availableRoles as role (role.id)}
-												<SelectItem value={{ value: role.id, label: role.name }}>
+												<SelectItem value={role.id}>
 													{role.name}
 												</SelectItem>
 											{/each}
