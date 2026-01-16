@@ -24,6 +24,15 @@ export const createSupabaseServerClient: Handle = async ({ event, resolve }) => 
 			return { session: null, user: null };
 		}
 
+		// Check if session is older than 7 days (security policy: session timeout)
+		const sessionAge = Date.now() - new Date(session.user.created_at).getTime();
+		const sevenDays = 7 * 24 * 60 * 60 * 1000;
+		if (sessionAge > sevenDays) {
+			// Session expired - sign out silently
+			await event.locals.supabase.auth.signOut();
+			return { session: null, user: null };
+		}
+
 		const {
 			data: { user },
 			error
