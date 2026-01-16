@@ -113,3 +113,95 @@ EXCEPTION
         RAISE EXCEPTION 'Error creating test user: %', SQLERRM;
 END $$;
 
+-- ============================================================================
+-- 2. Create Regular User (user@test.com / password / Mike Smith)
+-- ============================================================================
+
+DO $$
+DECLARE
+    v_user_id UUID;
+BEGIN
+    -- Insert regular user into auth.users
+    INSERT INTO auth.users (
+        instance_id,
+        id,
+        aud,
+        role,
+        email,
+        encrypted_password,
+        email_confirmed_at,
+        invited_at,
+        confirmation_token,
+        confirmation_sent_at,
+        recovery_token,
+        recovery_sent_at,
+        email_change_token_new,
+        email_change,
+        email_change_sent_at,
+        last_sign_in_at,
+        raw_app_meta_data,
+        raw_user_meta_data,
+        is_super_admin,
+        created_at,
+        updated_at,
+        phone,
+        phone_confirmed_at,
+        phone_change,
+        phone_change_token,
+        phone_change_sent_at,
+        email_change_token_current,
+        email_change_confirm_status,
+        banned_until,
+        reauthentication_token,
+        reauthentication_sent_at,
+        is_sso_user,
+        deleted_at
+    ) VALUES (
+        '00000000-0000-0000-0000-000000000000',
+        gen_random_uuid(),
+        'authenticated',
+        'authenticated',
+        'user@test.com',
+        crypt('password', gen_salt('bf')),  -- Bcrypt hash of 'password'
+        now(),
+        NULL,
+        '',
+        NULL,
+        '',
+        NULL,
+        '',
+        '',
+        NULL,
+        NULL,
+        '{"provider":"email","providers":["email"]}'::jsonb,
+        '{"first_name":"Mike", "last_name":"Smith"}'::jsonb,
+        NULL,
+        now(),
+        now(),
+        NULL,
+        NULL,
+        '',
+        '',
+        NULL,
+        '',
+        0,
+        NULL,
+        '',
+        NULL,
+        false,
+        NULL
+    )
+    RETURNING id INTO v_user_id;
+
+    RAISE NOTICE '✓ Regular user created: user@test.com (password: password)';
+    RAISE NOTICE '  User ID: %', v_user_id;
+    RAISE NOTICE '  Full Name: Mike Smith';
+    RAISE NOTICE '  Note: Default Guest role will be assigned by trigger on_auth_user_created';
+
+EXCEPTION
+    WHEN unique_violation THEN
+        RAISE NOTICE '⚠ Regular user user@test.com already exists - skipping creation';
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'Error creating regular user: %', SQLERRM;
+END $$;
+
