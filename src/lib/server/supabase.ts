@@ -34,8 +34,19 @@ export const createSupabaseServerClient: Handle = async ({ event, resolve }) => 
 
 	event.locals.safeGetSession = async () => {
 		const {
+			data: { user },
+			error
+		} = await event.locals.supabase.auth.getUser();
+
+		if (error || !user) {
+			return { session: null, user: null };
+		}
+
+		// Get session after verifying the user is authenticated
+		const {
 			data: { session }
 		} = await event.locals.supabase.auth.getSession();
+
 		if (!session) {
 			return { session: null, user: null };
 		}
@@ -46,14 +57,6 @@ export const createSupabaseServerClient: Handle = async ({ event, resolve }) => 
 		if (sessionAge > sevenDays) {
 			// Session expired - sign out silently
 			await event.locals.supabase.auth.signOut();
-			return { session: null, user: null };
-		}
-
-		const {
-			data: { user },
-			error
-		} = await event.locals.supabase.auth.getUser();
-		if (error) {
 			return { session: null, user: null };
 		}
 
