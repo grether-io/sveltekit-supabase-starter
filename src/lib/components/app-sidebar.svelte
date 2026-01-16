@@ -9,13 +9,13 @@
 	import Settings from '@lucide/svelte/icons/settings';
 	import LogOut from '@lucide/svelte/icons/log-out';
 	import ChevronUp from '@lucide/svelte/icons/chevron-up';
-	import Users from '@lucide/svelte/icons/users';
 	import Moon from '@lucide/svelte/icons/moon';
 	import Sun from '@lucide/svelte/icons/sun';
+	import Users from '@lucide/svelte/icons/users';
+	import ScrollText from '@lucide/svelte/icons/scroll-text';
 	import Home from '@lucide/svelte/icons/home';
 	import { toggleMode } from 'mode-watcher';
 	import type { User } from '@supabase/supabase-js';
-	import { useSidebar } from '$lib/components/ui/sidebar/context.svelte';
 
 	interface Props {
 		user: User | null;
@@ -25,7 +25,6 @@
 	let { user, userRole }: Props = $props();
 
 	const supabase = createSupabaseClient();
-	const sidebar = useSidebar();
 
 	async function handleSignOut() {
 		await supabase.auth.signOut();
@@ -55,6 +54,12 @@
 			title: 'Roles & Permissions',
 			href: '/admin/users',
 			icon: Users,
+			visible: isAdmin
+		},
+		{
+			title: 'Audit Log',
+			href: '/admin/audit',
+			icon: ScrollText,
 			visible: isAdmin
 		}
 	]);
