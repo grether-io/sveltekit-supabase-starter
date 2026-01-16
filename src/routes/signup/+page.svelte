@@ -43,25 +43,25 @@
 						<Field.Group>
 							<div class="grid grid-cols-2 gap-4">
 								<Field.Field>
-									<Field.Label for="signup-firstname">First name</Field.Label>
+									<Field.Label for="signup-first_name">First name</Field.Label>
 									<Input
-										id="signup-firstname"
-										name="firstname"
-										bind:value={$form.firstname}
-										{...$constraints.firstname}
+										id="signup-first_name"
+										name="first_name"
+										bind:value={$form.first_name}
+										{...$constraints.first_name}
 									/>
-									<Field.Error errors={$errors.firstname?.map(msg => ({ message: msg }))} />
+									<Field.Error errors={$errors.first_name?.map(msg => ({ message: msg }))} />
 								</Field.Field>
 
 								<Field.Field>
-									<Field.Label for="signup-lastname">Last name</Field.Label>
+									<Field.Label for="signup-last_name">Last name</Field.Label>
 									<Input
-										id="signup-lastname"
-										name="lastname"
-										bind:value={$form.lastname}
-										{...$constraints.lastname}
+										id="signup-last_name"
+										name="last_name"
+										bind:value={$form.last_name}
+										{...$constraints.last_name}
 									/>
-									<Field.Error errors={$errors.lastname?.map(msg => ({ message: msg }))} />
+									<Field.Error errors={$errors.last_name?.map(msg => ({ message: msg }))} />
 								</Field.Field>
 							</div>
 
