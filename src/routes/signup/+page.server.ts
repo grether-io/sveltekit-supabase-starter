@@ -24,16 +24,16 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		const { email, password, firstname, lastname } = form.data;
+		const { email, password, first_name, last_name } = form.data;
 
 		const { error } = await supabase.auth.signUp({
 			email: email as string,
 			password: password as string,
 			options: {
 				data: {
-					firstname,
-					lastname,
-					display_name: `${firstname} ${lastname}`
+					first_name,
+					last_name,
+					display_name: `${first_name} ${last_name}`
 				}
 			}
 		});
