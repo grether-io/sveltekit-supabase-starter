@@ -17,12 +17,12 @@
 					<span class="font-medium">Email:</span>
 					{data.user?.email}
 				</p>
-				<p>
-					<span class="font-medium">Display Name:</span>
-					{data.user?.user_metadata?.firstname && data.user?.user_metadata?.lastname
-						? `${data.user.user_metadata.firstname} ${data.user.user_metadata.lastname}`
-						: 'Not set'}
-				</p>
+			<p>
+				<span class="font-medium">Display Name:</span>
+				{data.user?.user_metadata?.first_name && data.user?.user_metadata?.last_name
+					? `${data.user.user_metadata.first_name} ${data.user.user_metadata.last_name}`
+					: 'Not set'}
+			</p>
 				<p>
 					<span class="font-medium">User ID:</span>
 					{data.user?.id}
