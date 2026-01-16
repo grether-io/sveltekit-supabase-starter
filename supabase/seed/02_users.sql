@@ -6,7 +6,7 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- ============================================================================
--- 1. Create Test User (test@test.com / password / John Doe)
+-- 1. Create Test User (admin@test.com / password / John Doe)
 -- ============================================================================
 
 DO $$
@@ -54,7 +54,7 @@ BEGIN
         gen_random_uuid(),
         'authenticated',
         'authenticated',
-        'test@test.com',
+        'admin@test.com',
         crypt('password', gen_salt('bf')),  -- Bcrypt hash of 'password'
         now(),
         NULL,
@@ -86,7 +86,7 @@ BEGIN
     )
     RETURNING id INTO v_user_id;
 
-    RAISE NOTICE '✓ Test user created: test@test.com (password: password)';
+    RAISE NOTICE '✓ Test user created: admin@test.com (password: password)';
     RAISE NOTICE '  User ID: %', v_user_id;
     RAISE NOTICE '  Full Name: John Doe';
 
@@ -104,17 +104,17 @@ BEGIN
         updated_by = v_user_id
     WHERE user_id = v_user_id;
 
-    RAISE NOTICE '✓ SuperAdmin role assigned to test@test.com';
+    RAISE NOTICE '✓ SuperAdmin role assigned to admin@test.com';
 
 EXCEPTION
     WHEN unique_violation THEN
-        RAISE NOTICE '⚠ Test user test@test.com already exists - skipping creation';
+        RAISE NOTICE '⚠ Test user admin@test.com already exists - skipping creation';
     WHEN OTHERS THEN
         RAISE EXCEPTION 'Error creating test user: %', SQLERRM;
 END $$;
 
 -- ============================================================================
--- 2. Create Regular User (user@test.com / password / Mike Smith)
+-- 2. Create Regular User (guest@test.com / password / Mike Smith)
 -- ============================================================================
 
 DO $$
@@ -161,7 +161,7 @@ BEGIN
         gen_random_uuid(),
         'authenticated',
         'authenticated',
-        'user@test.com',
+        'guest@test.com',
         crypt('password', gen_salt('bf')),  -- Bcrypt hash of 'password'
         now(),
         NULL,
@@ -193,14 +193,14 @@ BEGIN
     )
     RETURNING id INTO v_user_id;
 
-    RAISE NOTICE '✓ Regular user created: user@test.com (password: password)';
+    RAISE NOTICE '✓ Regular user created: guest@test.com (password: password)';
     RAISE NOTICE '  User ID: %', v_user_id;
     RAISE NOTICE '  Full Name: Mike Smith';
     RAISE NOTICE '  Note: Default Guest role will be assigned by trigger on_auth_user_created';
 
 EXCEPTION
     WHEN unique_violation THEN
-        RAISE NOTICE '⚠ Regular user user@test.com already exists - skipping creation';
+        RAISE NOTICE '⚠ Regular user guest@test.com already exists - skipping creation';
     WHEN OTHERS THEN
         RAISE EXCEPTION 'Error creating regular user: %', SQLERRM;
 END $$;
