@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { createSupabaseClient } from '$lib/supabase';
 	import { ROLE_LEVELS } from '$lib/constants/roles';
 	import * as Sidebar from '$lib/components/ui/sidebar';
@@ -28,6 +28,7 @@
 
 	async function handleSignOut() {
 		await supabase.auth.signOut();
+		await invalidateAll();
 		await goto('/login');
 	}
 
