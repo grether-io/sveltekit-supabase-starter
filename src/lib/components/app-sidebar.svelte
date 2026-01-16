@@ -165,7 +165,7 @@
 									<span class="text-xs font-semibold">{getUserInitials()}</span>
 								</div>
 								<div class="grid flex-1 text-left text-sm leading-tight">
-									<span class="truncate text-xs">{user?.email}</span>
+									<span class="truncate text-s">{user?.user_metadata?.first_name} {user?.user_metadata?.last_name}</span>
 								</div>
 								<ChevronUp class="ml-auto size-4" />
 							</Sidebar.MenuButton>
