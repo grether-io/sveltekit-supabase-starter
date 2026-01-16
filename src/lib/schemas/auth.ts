@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const signupSchema = z.object({
 	email: z.email('Please enter a valid email address'),
 	password: z.string().min(8, 'Password must be at least 8 characters'),
-	firstname: z.string().min(1, 'First name is required'),
-	lastname: z.string().min(1, 'Last name is required')
+	first_name: z.string().min(1, 'First name is required'),
+	last_name: z.string().min(1, 'Last name is required')
 });
 
 export const loginSchema = z.object({
@@ -31,8 +31,8 @@ export const resetPasswordSchema = z
 	});
 
 export const updateProfileSchema = z.object({
-	firstname: z.string().min(1, 'First name is required'),
-	lastname: z.string().min(1, 'Last name is required')
+	first_name: z.string().min(1, 'First name is required'),
+	last_name: z.string().min(1, 'Last name is required')
 });
 
 export const updateEmailSchema = z.object({
