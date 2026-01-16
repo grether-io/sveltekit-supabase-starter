@@ -8,6 +8,7 @@ import {
 	assignRole,
 	canManageUser
 } from '$lib/server/roles';
+import { createSupabaseAdminClient } from '$lib/server/supabase';
 
 export const load = async (event: RequestEvent) => {
 	const { locals } = event;
@@ -21,8 +22,11 @@ export const load = async (event: RequestEvent) => {
 		};
 	}
 
+	// Create admin client for auth.admin operations
+	const adminClient = createSupabaseAdminClient();
+
 	// Fetch users with roles (filtered by current user's level)
-	const users = await getUsersWithRoles(userRole.level, supabase);
+	const users = await getUsersWithRoles(userRole.level, supabase, adminClient);
 
 	// Fetch all roles and filter those below current user's level
 	const allRoles = await getAllRoles(supabase);
